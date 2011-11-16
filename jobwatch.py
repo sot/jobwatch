@@ -5,7 +5,7 @@ Watch log output from processing jobs and check for problems.
 import re
 import os
 import time
-
+import jinja2
 
 class JobWatch(object):
     errors = ('warn', 'error')
@@ -20,12 +20,12 @@ class JobWatch(object):
         self.requires = self.requires if (requires is None) else requires
         self.maxage = maxage
 
-        # logfile status checks
-        self.exists = None
-        self.stale = None
+        # Logfile status.  Initial values force NOT OK status by default.
+        self.exists = False
+        self.stale = True
         self.age = None
-        self.missing_requires = None
-        self.found_errors = None
+        self.missing_requires = True
+        self.found_errors = True
 
         self.check()
 
@@ -45,7 +45,8 @@ class JobWatch(object):
         found_requires = set()
         found_errors = []
 
-        for i, line in enumerate(open(logfile, 'r')):
+        self.loglines = open(logfile, 'r').readlines()
+        for i, line in enumerate(self.loglines):
             for error in self.errors:
                 if re.search(error, line, re.IGNORECASE):
                     found_errors.append((i, line, error))
@@ -65,3 +66,49 @@ class SkaJobWatch(JobWatch):
         self.logdir = logdir
         super(SkaJobWatch, self).__init__(logfile, errors=errors,
                                           requires=requires, maxage=maxage)
+
+def make_html_summary(jobwatches, outdir='out',
+                     index_template='index_template.html',
+                     log_template='log_template.html'):
+    filedir = os.path.dirname(__file__)
+    error_line = '<a name=error{0}><span class="red">{1}</span></a>'
+
+    if not os.path.isabs(log_template):
+        log_template = os.path.join(filedir, log_template)
+    template = jinja2.Template(open(log_template, 'r').read())
+
+    status_rows = []
+    for i_jw, jw in enumerate(jobwatches):
+        ok = jw.exists and not (jw.stale or jw.missing_requires or
+                                jw.found_errors)
+        try:
+            task = jw.task
+        except AttributeError:
+            task = os.path.basename(jw.logfile)
+
+        
+        log_html_name = 'log{}.html'.format(i_jw)
+        status_rows.append({'ok': ok, 'task': task, 'log_html': log_html_name})
+
+        loglines = list(jw.loglines)
+        for i_line, line, error in jw.found_errors:
+            loglines[i_line] = error_line.format(i_line, loglines[i_line])
+        
+        log_html = template.render(task=task,
+                                   loglines='<br/>'.join(loglines),
+                                   found_errors=jw.found_errors,
+                                   missing_requires=jw.missing_requires)
+        outfile = open(os.path.join(outdir, log_html_name), 'w')
+        outfile.write(log_html)
+        outfile.close()
+
+    if not os.path.isabs(index_template):
+        index_template = os.path.join(filedir, index_template)
+    template = jinja2.Template(open(index_template, 'r').read())
+    index_html = template.render(status_rows=status_rows)
+
+    outfile = open(os.path.join(outdir, 'index.html'), 'w')
+    outfile.write(index_html)
+    outfile.close()
+    
+    

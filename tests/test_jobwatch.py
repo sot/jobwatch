@@ -43,5 +43,11 @@ def test_default_errors():
 
 def test_missing_requires():
     jw = jobwatch.JobWatch('logs/errors.log', requires=['hello world'])
-    #jw.check()
     assert jw.missing_requires == set(['hello world'])
+
+def test_make_html_summary():
+    jw1 = jobwatch.JobWatch('logs/errors.log')
+    jw2 = jobwatch.SkaJobWatch(task='eng_archive')
+    jobwatch.make_html_summary([jw1, jw2])
+    assert True
+    

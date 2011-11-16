@@ -1,0 +1,24 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <style type="text/css">
+    .red { color: #ff0000; }
+    </style>
+    <title>Ska Job Status</title>
+  </head>
+
+  <body>
+    <h1>Ska Job Status</h1>
+
+    <table>
+      <tr><th>Task</th> <th>Status</th> </tr>
+      {% for row in status_rows %}
+      <tr>
+        <td><a href="{{row['log_html']}}">{{row['task']}}</a></td> 
+        <td>{% if row['ok'] %}OK{% else %}<span class="red">NOT OK</span>{% endif %}</td>
+      </tr>
+      {% endfor %}
+    </table>
+    <hr>
+  </body>
+</html>
