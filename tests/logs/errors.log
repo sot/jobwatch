@@ -1,0 +1,79 @@
+2011-11-16 08:04:55,816 File solarf434550302N001_eph1.fits.gz already in archfiles - unlinking and skipping
+2011-11-16 08:04:55,846 File solarf434808302N001_eph1.fits.gz already in archfiles - unlinking and skipping
+2011-11-16 08:04:55,871 Reading (2 / 3) solarf435153902N001_eph1.fits.gz
+2011-11-16 08:04:55,933 Writing accumulated column data to h5 file at Wed Nov 16 08:04:55 2011
+2011-11-16 08:04:55,946 Appending 6192 items to /proj/sot/ska/data/eng_archive/data/solarephem1/SOLAREPHEM1_Z.h5
+2011-11-16 08:04:56,012 Appending 6192 items to /proj/sot/ska/data/eng_archive/data/solarephem1/SOLAREPHEM1_Y.h5
+2011-11-16 08:04:56,058 Appending 6192 items to /proj/sot/ska/data/eng_archive/data/solarephem1/SOLAREPHEM1_X.h5
+2011-11-16 08:04:56,092 Appending 6192 items to /proj/sot/ska/data/eng_archive/data/solarephem1/TIME.h5
+2011-11-16 08:04:56,095 Removing overlapping data in rows 6896021:6901061
+2011-11-16 08:04:56,116 Appending 6192 items to /proj/sot/ska/data/eng_archive/data/solarephem1/SOLAREPHEM1_VZ.h5
+2011-11-16 08:04:56,165 Appending 6192 items to /proj/sot/ska/data/eng_archive/data/solarephem1/SOLAREPHEM1_VX.h5
+2011-11-16 08:04:56,195 Appending 6192 items to /proj/sot/ska/data/eng_archive/data/solarephem1/SOLAREPHEM1_VY.h5
+Error: test message 1
+2011-11-16 08:04:56,320 mv /data/cosmos2/eng_archive/tmpglQkBd/solarf435153902N001_eph1.fits.gz /data/cosmos2/eng_archive/data/solarephem1/arch/2011/289/solarf435153902N001_eph1.fits.gz
+2011-11-16 08:04:56,507 Updating stats file /proj/sot/ska/data/eng_archive/data/solarephem1/daily/SOLAREPHEM1_Z.h5
+2011-11-16 08:04:56,581   Adding 4 records
+2011-11-16 08:04:56,786 Updating stats file /proj/sot/ska/data/eng_archive/data/solarephem1/5min/SOLAREPHEM1_Z.h5
+2011-11-16 08:04:56,815   Adding 1054 records
+2011-11-16 08:04:57,061 Updating stats file /proj/sot/ska/data/eng_archive/data/solarephem1/daily/SOLAREPHEM1_Y.h5
+2011-11-16 08:04:57,087   Adding 4 records
+2011-11-16 08:04:57,277 Updating stats file /proj/sot/ska/data/eng_archive/data/solarephem1/5min/SOLAREPHEM1_Y.h5
+2011-11-16 08:04:57,307   Adding 1054 records
+2011-11-16 08:04:57,670 Updating stats file /proj/sot/ska/data/eng_archive/data/solarephem1/daily/SOLAREPHEM1_X.h5
+2011-11-16 08:04:57,696   Adding 4 records
+2011-11-16 08:04:57,707 Updating stats file /proj/sot/ska/data/eng_archive/data/solarephem1/5min/SOLAREPHEM1_X.h5
+2011-11-16 08:04:57,737   Adding 1054 records
+2011-11-16 08:04:57,883 Updating stats file /proj/sot/ska/data/eng_archive/data/solarephem1/daily/SOLAREPHEM1_VZ.h5
+2011-11-16 08:04:57,908   Adding 4 records
+2011-11-16 08:04:58,336 Updating stats file /proj/sot/ska/data/eng_archive/data/solarephem1/5min/SOLAREPHEM1_VZ.h5
+2011-11-16 08:04:58,366   Adding 1054 records
+2011-11-16 08:04:58,387 Updating stats file /proj/sot/ska/data/eng_archive/data/solarephem1/daily/SOLAREPHEM1_VX.h5
+2011-11-16 08:04:58,413   Adding 4 records
+2011-11-16 08:04:58,452 Updating stats file /proj/sot/ska/data/eng_archive/data/solarephem1/5min/SOLAREPHEM1_VX.h5
+2011-11-16 08:04:58,482   Adding 1054 records
+2011-11-16 08:04:58,507 Updating stats file /proj/sot/ska/data/eng_archive/data/solarephem1/daily/SOLAREPHEM1_VY.h5
+2011-11-16 08:04:58,533   Adding 4 records
+2011-11-16 08:04:58,551 Updating stats file /proj/sot/ska/data/eng_archive/data/solarephem1/5min/SOLAREPHEM1_VY.h5
+2011-11-16 08:04:58,581   Adding 1054 records
+2011-11-16 08:04:58,628 Processing angleephem content type
+2011-11-16 08:05:00,626 ********** angleephem Wed Nov 16 08:05:00 2011 **********
+errors: test message 2
+ARC5GL> tstart=2011:319:00:58:53.816
+
+ARC5GL> tstop=2011:319:19:00:29.801
+
+ARC5GL> get ephem_angles_1{oangleephem}
+Retrieved files:
+anglesf437699700N001_eph1.fits.gz
+anglesf437706000N001_eph1.fits.gz
+anglesf437710800N001_eph1.fits.gz
+anglesf437717400N001_eph1.fits.gz
+anglesf437724000N001_eph1.fits.gz
+anglesf437730600N001_eph1.fits.gz
+anglesf437737200N001_eph1.fits.gz
+anglesf437743500N001_eph1.fits.gz
+anglesf437750100N001_eph1.fits.gz
+anglesf437756700N001_eph1.fits.gz
+anglesf437763300N001_eph1.fits.gz
+anglesf437769900N001_eph1.fits.gz
+
+warn test message 3
+ARC5GL> tstart=2011:319:19:00:29.801
+
+ARC5GL> tstop=2011:320:13:02:05.786
+
+ARC5GL> get ephem_angles_1{oangleephem}
+Retrieved files:
+anglesf437769900N001_eph1.fits.gz
+anglesf437772900N001_eph1.fits.gz
+anglesf437779500N001_eph1.fits.gz
+anglesf437786100N001_eph1.fits.gz
+anglesf437792400N001_eph1.fits.gz
+
+closed arc5gl WARNING test message 4
+Closed arc5gl
+2011-11-16 08:05:06,415 File anglesf437699700N001_eph1.fits.gz already in archfiles - unlinking and skipping
+2011-11-16 08:05:06,446 File anglesf437706000N001_eph1.fits.gz already in archfiles - unlinking and skipping
+2011-11-16 08:05:06,472 Reading (2 / 16) anglesf437710800N001_eph1.fits.gz
+2011-11-16 08:05:06,586 Reading (3 / 16) anglesf437717400N001_eph1.fits.gz
