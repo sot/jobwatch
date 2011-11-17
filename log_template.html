@@ -4,11 +4,29 @@
     <style type="text/css">
     .red { color: #ff0000; }
     </style>
-    <title>Log {{task}}</title>
+    <title>{{task}}</title>
   </head>
 
   <body>
-    <h1>Log {{task}}</h1>
+    <a href="index.html">Index</a>
+    <h1>{{task}}: {{filedate}}</h1>
+    <h2>{{logfile}}</h2>
+
+    {% if missing_requires %}
+    <h2> Missing required outputs </h2>
+    <ul> {% for missing_require in missing_requires %}<li>{{ missing_require}}</li>{% endfor %}</ul>
+    {% endif %}
+
+    {% if found_errors %}
+    <h2> Errors </h2>
+    <ul> 
+    {% for found_error in found_errors %}
+      <li><a href="#error{{found_error[0]}}">Line {{found_error[0]}}</a>: {{ found_error[1]}}</li>
+    {% endfor %}
+    </ul>
+    {% endif %}
+
+    <h2>Log file</h2>
     <span style="font-family:monospace;">
     {{loglines}}
     </span>

@@ -8,14 +8,16 @@
   </head>
 
   <body>
-    <h1>Ska Job Status</h1>
+    <h1>Ska Job Status: {{rundate}}</h1>
 
     <table>
-      <tr><th>Task</th> <th>Status</th> </tr>
+      <tr><th>Task</th> <th>Status</th> <th>Age / MaxAge</th> <th>File Date</th> </tr>
       {% for row in status_rows %}
       <tr>
         <td><a href="{{row['log_html']}}">{{row['task']}}</a></td> 
         <td>{% if row['ok'] %}OK{% else %}<span class="red">NOT OK</span>{% endif %}</td>
+        <td>{{"%.2f / %.1f"|format(row['age'], row['maxage'])}}</td>
+        <td>{{row['filedate']}}</td>
       </tr>
       {% endfor %}
     </table>

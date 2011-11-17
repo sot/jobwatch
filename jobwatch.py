@@ -39,7 +39,9 @@ class JobWatch(object):
         if not self.exists:
             return
 
-        self.age = (time.time() - os.path.getmtime(logfile)) / 86400.0
+        self.filetime = os.path.getmtime(logfile)
+        self.filedate = time.ctime(self.filetime)
+        self.age = (time.time() - self.filetime) / 86400.0
         self.stale = self.age > self.maxage
 
         found_requires = set()
@@ -88,16 +90,21 @@ def make_html_summary(jobwatches, outdir='out',
 
         
         log_html_name = 'log{}.html'.format(i_jw)
-        status_rows.append({'ok': ok, 'task': task, 'log_html': log_html_name})
+        rundate = time.ctime()
+        status_rows.append({'ok': ok, 'task': task, 'log_html': log_html_name,
+                            'filedate': jw.filedate, 'age': jw.age,
+                            'maxage': jw.maxage})
 
         loglines = list(jw.loglines)
         for i_line, line, error in jw.found_errors:
             loglines[i_line] = error_line.format(i_line, loglines[i_line])
         
         log_html = template.render(task=task,
+                                   logfile=os.path.abspath(jw.logfile),
                                    loglines='<br/>'.join(loglines),
                                    found_errors=jw.found_errors,
-                                   missing_requires=jw.missing_requires)
+                                   missing_requires=jw.missing_requires,
+                                   filedate=jw.filedate)
         outfile = open(os.path.join(outdir, log_html_name), 'w')
         outfile.write(log_html)
         outfile.close()
@@ -105,7 +112,9 @@ def make_html_summary(jobwatches, outdir='out',
     if not os.path.isabs(index_template):
         index_template = os.path.join(filedir, index_template)
     template = jinja2.Template(open(index_template, 'r').read())
-    index_html = template.render(status_rows=status_rows)
+    index_html = template.render(status_rows=status_rows,
+                                 rundate=time.ctime(),
+                                 )
 
     outfile = open(os.path.join(outdir, 'index.html'), 'w')
     outfile.write(index_html)
