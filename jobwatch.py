@@ -8,24 +8,16 @@ import time
 import jinja2
 
 class JobWatch(object):
-    errors = ('warn', 'error')
-    requires = ()
-
     def __init__(self, logfile,
-                 errors=None,
-                 requires=None,
+                 errors=(),
+                 requires=(),
                  maxage=1):
         self._logfile = logfile
-        self.errors = self.errors if (errors is None) else errors
-        self.requires = self.requires if (requires is None) else requires
+        self.errors = errors
+        self.requires = requires
         self.maxage = maxage
 
-        # Logfile status.  Initial values force NOT OK status by default.
-        self.exists = False
-        self.stale = True
-        self.age = None
-        self.missing_requires = True
-        self.found_errors = True
+        # Logfile status
 
         self.check()
 
@@ -33,21 +25,38 @@ class JobWatch(object):
     def logfile(self):
         return self._logfile.format(**self.__dict__)
 
+    @property
+    def loglines(self):
+        if not hasattr(self, '_loglines'):
+            self._loglines = open(self.logfile, 'r').readlines()
+        return self._loglines
+
+    @property
+    def age(self):
+        if not hasattr(self, '_age'):
+            self.filetime = os.path.getmtime(self.logfile)
+            self.filedate = time.ctime(self.filetime)
+            self._age = (time.time() - self.filetime) / 86400.0
+        return self._age
+
+    @property
+    def exists(self):
+        if not hasattr(self, '_exists'):
+            self._exists = os.path.exists(self.logfile)
+        return self._exists
+
     def check(self):
-        logfile = self.logfile
-        self.exists = os.path.exists(logfile)
         if not self.exists:
+            self.stale = False
+            self.missing_requires = set()
+            self.found_errors = []
             return
 
-        self.filetime = os.path.getmtime(logfile)
-        self.filedate = time.ctime(self.filetime)
-        self.age = (time.time() - self.filetime) / 86400.0
         self.stale = self.age > self.maxage
 
         found_requires = set()
         found_errors = []
 
-        self.loglines = open(logfile, 'r').readlines()
         for i, line in enumerate(self.loglines):
             for error in self.errors:
                 if re.search(error, line, re.IGNORECASE):
@@ -61,13 +70,26 @@ class JobWatch(object):
 
 
 class SkaJobWatch(JobWatch):
-    def __init__(self, task, errors=None, requires=None, logdir='logs',
-       logfile='/proj/sot/ska/data/{task}/{logdir}/daily.0/{task}.log',
-       maxage=1):
+    def __init__(self, task, errors=('warn', 'error'), requires=(),
+                 logdir='logs', maxage=1,
+                 logfile='/proj/sot/ska/data/{task}/{logdir}/daily.0/{task}.log'):
         self.task = task
         self.logdir = logdir
         super(SkaJobWatch, self).__init__(logfile, errors=errors,
                                           requires=requires, maxage=maxage)
+
+class SkaDbWatch(JobWatch):
+    def __init__(self, task, maxage=1, query=None, logfile='NONE'):
+        self.task = task
+        super(SkaDbWatch, self).__init__('NONE', maxage=maxage)
+
+    @property
+    def loglines(self):
+        return list()
+
+    def check(self):
+        self.exists = True
+        pass
 
 def make_html_summary(jobwatches, outdir='out',
                      index_template='index_template.html',

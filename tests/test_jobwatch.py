@@ -31,23 +31,25 @@ def test_stale():
     
 def test_exists():
     logfile = 'logs/doesnt_exist'
-    jw = jobwatch.JobWatch(logfile)
+    jw = jobwatch.JobWatch(logfile, errors=('warn', 'error'))
     assert jw.exists == False
 
 def test_default_errors():
-    jw = jobwatch.JobWatch('logs/errors.log')
+    jw = jobwatch.JobWatch('logs/errors.log', errors=('warn', 'error'))
     assert len(jw.found_errors) == 4
     assert jw.found_errors[2] == (60, 'warn test message 3\n', 'warn')
 
 def test_missing_requires():
-    jw = jobwatch.JobWatch('logs/errors.log', requires=['hello world', 'appending'])
+    jw = jobwatch.JobWatch('logs/errors.log', errors=('warn', 'error'),
+                           requires=('hello world', 'appending'))
     assert jw.missing_requires == set(['hello world'])
 
 def test_make_html_summary():
     jws = [jobwatch.JobWatch('logs/errors.log',
-                             requires=['MISSING REQUIRED OUTPUT',
+                             errors=('warn', 'error'),
+                             requires=('MISSING REQUIRED OUTPUT',
                                        'MORE missing output',
-                                       'APPending']),
+                                       'APPending')),
            jobwatch.SkaJobWatch(task='eng_archive'),
            jobwatch.SkaJobWatch(task='astromon')]
     jobwatch.make_html_summary(jws)
