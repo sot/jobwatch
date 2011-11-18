@@ -6,35 +6,37 @@ import re
 import os
 import time
 import jinja2
+import Ska.DBI
+from Chandra.Time import DateTime
+
 
 class JobWatch(object):
-    def __init__(self, logfile,
+    def __init__(self, task, filename,
                  errors=(),
                  requires=(),
                  maxage=1):
-        self._logfile = logfile
+        self.task = task
+        self._filename = filename
         self.errors = errors
         self.requires = requires
         self.maxage = maxage
 
-        # Logfile status
-
         self.check()
 
     @property
-    def logfile(self):
-        return self._logfile.format(**self.__dict__)
+    def filename(self):
+        return self._filename.format(**self.__dict__)
 
     @property
-    def loglines(self):
-        if not hasattr(self, '_loglines'):
-            self._loglines = open(self.logfile, 'r').readlines()
-        return self._loglines
+    def filelines(self):
+        if not hasattr(self, '_filelines'):
+            self._filelines = open(self.filename, 'r').readlines()
+        return self._filelines
 
     @property
     def age(self):
         if not hasattr(self, '_age'):
-            self.filetime = os.path.getmtime(self.logfile)
+            self.filetime = os.path.getmtime(self.filename)
             self.filedate = time.ctime(self.filetime)
             self._age = (time.time() - self.filetime) / 86400.0
         return self._age
@@ -42,7 +44,7 @@ class JobWatch(object):
     @property
     def exists(self):
         if not hasattr(self, '_exists'):
-            self._exists = os.path.exists(self.logfile)
+            self._exists = os.path.exists(self.filename)
         return self._exists
 
     def check(self):
@@ -56,8 +58,7 @@ class JobWatch(object):
 
         found_requires = set()
         found_errors = []
-
-        for i, line in enumerate(self.loglines):
+        for i, line in enumerate(self.filelines):
             for error in self.errors:
                 if re.search(error, line, re.IGNORECASE):
                     found_errors.append((i, line, error))
@@ -69,27 +70,68 @@ class JobWatch(object):
         self.found_errors = found_errors
 
 
+class FileWatch(JobWatch):
+    """Watch the date of a file but do not look into the file contents for
+    errors.
+    """
+    def __init__(self, task, maxage=1,
+                 filename=None):
+        super(FileWatch, self).__init__(task, filename, maxage=maxage,
+                                        errors=(), requires=())
+
+    @property
+    def filelines(self):
+        return []
+
+
 class SkaJobWatch(JobWatch):
     def __init__(self, task, errors=('warn', 'error'), requires=(),
                  logdir='logs', maxage=1,
-                 logfile='/proj/sot/ska/data/{task}/{logdir}/daily.0/{task}.log'):
+                 filename='/proj/sot/ska/data/{task}/' \
+                         '{logdir}/daily.0/{task}.log'):
         self.task = task
         self.logdir = logdir
-        super(SkaJobWatch, self).__init__(logfile, errors=errors,
+        super(SkaJobWatch, self).__init__(task, filename, errors=errors,
                                           requires=requires, maxage=maxage)
 
+
 class SkaDbWatch(JobWatch):
-    def __init__(self, task, maxage=1, query=None, logfile='NONE'):
+    def __init__(self, task, maxage=1, table=None, timekey=None,
+                 query='SELECT MAX({timekey}) AS maxtime FROM {table}'):
         self.task = task
-        super(SkaDbWatch, self).__init__('NONE', maxage=maxage)
+        self._query = query
+        self.table = table
+        self.timekey = timekey
+        super(SkaDbWatch, self).__init__(task, filename='NONE', maxage=maxage)
 
     @property
-    def loglines(self):
-        return list()
+    def query(self):
+        return self._query.format(**self.__dict__)
 
-    def check(self):
-        self.exists = True
-        pass
+    @property
+    def filelines(self):
+        return []
+
+    @property
+    def exists(self):
+        return True
+
+    @property
+    def age(self):
+        if not hasattr(self, '_age'):
+            row = self.db.fetchone(self.query)
+            self.filetime = DateTime(row['maxtime']).unix
+            self.filedate = time.ctime(self.filetime)
+            self._age = (time.time() - self.filetime) / 86400.0
+        return self._age
+
+    @property
+    def db(self):
+        if not hasattr(self.__class__, '_db'):
+            self.__class__._db = Ska.DBI.DBI(dbi='sybase', server='sybase',
+                                             user='aca_read', database='aca')
+        return self._db
+
 
 def make_html_summary(jobwatches, outdir='out',
                      index_template='index_template.html',
@@ -101,29 +143,23 @@ def make_html_summary(jobwatches, outdir='out',
         log_template = os.path.join(filedir, log_template)
     template = jinja2.Template(open(log_template, 'r').read())
 
-    status_rows = []
+    rows = []
     for i_jw, jw in enumerate(jobwatches):
         ok = jw.exists and not (jw.stale or jw.missing_requires or
                                 jw.found_errors)
-        try:
-            task = jw.task
-        except AttributeError:
-            task = os.path.basename(jw.logfile)
 
-        
         log_html_name = 'log{}.html'.format(i_jw)
-        rundate = time.ctime()
-        status_rows.append({'ok': ok, 'task': task, 'log_html': log_html_name,
-                            'filedate': jw.filedate, 'age': jw.age,
-                            'maxage': jw.maxage})
+        rows.append({'ok': ok, 'task': jw.task, 'log_html': log_html_name,
+                     'filedate': jw.filedate, 'age': jw.age,
+                     'maxage': jw.maxage})
 
-        loglines = list(jw.loglines)
+        filelines = list(jw.filelines)
         for i_line, line, error in jw.found_errors:
-            loglines[i_line] = error_line.format(i_line, loglines[i_line])
-        
-        log_html = template.render(task=task,
-                                   logfile=os.path.abspath(jw.logfile),
-                                   loglines='<br/>'.join(loglines),
+            filelines[i_line] = error_line.format(i_line, filelines[i_line])
+
+        log_html = template.render(task=jw.task,
+                                   filename=os.path.abspath(jw.filename),
+                                   filelines='<br/>'.join(filelines),
                                    found_errors=jw.found_errors,
                                    missing_requires=jw.missing_requires,
                                    filedate=jw.filedate)
@@ -134,12 +170,10 @@ def make_html_summary(jobwatches, outdir='out',
     if not os.path.isabs(index_template):
         index_template = os.path.join(filedir, index_template)
     template = jinja2.Template(open(index_template, 'r').read())
-    index_html = template.render(status_rows=status_rows,
+    index_html = template.render(status_rows=rows,
                                  rundate=time.ctime(),
                                  )
 
     outfile = open(os.path.join(outdir, 'index.html'), 'w')
     outfile.write(index_html)
     outfile.close()
-    
-    

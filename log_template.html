@@ -10,7 +10,7 @@
   <body>
     <a href="index.html">Index</a>
     <h1>{{task}}: {{filedate}}</h1>
-    <h2>{{logfile}}</h2>
+    <h2>{{filename}}</h2>
 
     {% if missing_requires %}
     <h2> Missing required outputs </h2>
@@ -26,10 +26,12 @@
     </ul>
     {% endif %}
 
-    <h2>Log file</h2>
+    {% if filelines %}
+    <h2>File contents</h2>
     <span style="font-family:monospace;">
-    {{loglines}}
+    {{filelines}}
     </span>
+    {% endif %}
     <hr>
   </body>
 </html>
