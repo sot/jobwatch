@@ -77,3 +77,12 @@ Closed arc5gl
 2011-11-16 08:05:06,446 File anglesf437706000N001_eph1.fits.gz already in archfiles - unlinking and skipping
 2011-11-16 08:05:06,472 Reading (2 / 16) anglesf437710800N001_eph1.fits.gz
 2011-11-16 08:05:06,586 Reading (3 / 16) anglesf437717400N001_eph1.fits.gz
+
+Perl IDL tests
+--------------
+Ugh: Use of uninitialized value test message 5
+
+IDL Program caused arithmetic error 
+
+FATAL fault test message 6
+

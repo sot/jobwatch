@@ -9,6 +9,9 @@ import jinja2
 import Ska.DBI
 from Chandra.Time import DateTime
 
+LOUD = False
+ERRORS = ('error', 'warn', 'fail', 'fatal', 'exception', 'traceback')
+
 
 class JobWatch(object):
     def __init__(self, task, filename,
@@ -20,6 +23,8 @@ class JobWatch(object):
         self.errors = errors
         self.requires = requires
         self.maxage = maxage
+        self.filetime = None
+        self.filedate = None
 
         self.check()
 
@@ -30,7 +35,10 @@ class JobWatch(object):
     @property
     def filelines(self):
         if not hasattr(self, '_filelines'):
-            self._filelines = open(self.filename, 'r').readlines()
+            if self.exists:
+                self._filelines = open(self.filename, 'r').readlines()
+            else:
+                self._filelines = []
         return self._filelines
 
     @property
@@ -48,6 +56,8 @@ class JobWatch(object):
         return self._exists
 
     def check(self):
+        if LOUD:
+            print 'Checking ', repr(self)
         if not self.exists:
             self.stale = False
             self.missing_requires = set()
@@ -69,6 +79,9 @@ class JobWatch(object):
         self.missing_requires = set(self.requires) - found_requires
         self.found_errors = found_errors
 
+    def __repr__(self):
+        return '<JobWatch type={} task={}>'
+
 
 class FileWatch(JobWatch):
     """Watch the date of a file but do not look into the file contents for
@@ -76,6 +89,7 @@ class FileWatch(JobWatch):
     """
     def __init__(self, task, maxage=1,
                  filename=None):
+        self.type = 'File'
         super(FileWatch, self).__init__(task, filename, maxage=maxage,
                                         errors=(), requires=())
 
@@ -85,22 +99,25 @@ class FileWatch(JobWatch):
 
 
 class SkaJobWatch(JobWatch):
-    def __init__(self, task, errors=('warn', 'error'), requires=(),
-                 logdir='logs', maxage=1,
+    def __init__(self, task, maxage=1, errors=ERRORS, requires=(),
+                 logdir='logs', logtask=None,
                  filename='/proj/sot/ska/data/{task}/' \
-                         '{logdir}/daily.0/{task}.log'):
+                         '{logdir}/daily.0/{logtask}.log'):
+        self.type = 'Log'
         self.task = task
+        self.logtask = logtask or task
         self.logdir = logdir
         super(SkaJobWatch, self).__init__(task, filename, errors=errors,
                                           requires=requires, maxage=maxage)
 
 
 class SkaDbWatch(JobWatch):
-    def __init__(self, task, maxage=1, table=None, timekey=None,
+    def __init__(self, task, maxage=1, table=None, timekey='tstart',
                  query='SELECT MAX({timekey}) AS maxtime FROM {table}'):
+        self.type = 'DB'
         self.task = task
         self._query = query
-        self.table = table
+        self.table = table or task
         self.timekey = timekey
         super(SkaDbWatch, self).__init__(task, filename='NONE', maxage=maxage)
 
@@ -149,9 +166,10 @@ def make_html_summary(jobwatches, outdir='out',
                                 jw.found_errors)
 
         log_html_name = 'log{}.html'.format(i_jw)
+        age = '{:.2f}'.format(jw.age) if jw.exists else 'None'
         rows.append({'ok': ok, 'task': jw.task, 'log_html': log_html_name,
-                     'filedate': jw.filedate, 'age': jw.age,
-                     'maxage': jw.maxage})
+                     'filedate': jw.filedate, 'age': age,
+                     'type': jw.type, 'maxage': jw.maxage})
 
         filelines = list(jw.filelines)
         for i_line, line, error in jw.found_errors:

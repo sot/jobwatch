@@ -75,8 +75,13 @@ def test_dbwatch():
 
 
 def test_make_html_summary():
+    perlidl_errs = ('Use of uninitialized value',
+                    '(?<!Program caused arithmetic )error',
+                    'warn',
+                    'fatal')
+
     jws = [jobwatch.JobWatch('errors', 'logs/errors.log',
-                             errors=('warn', 'error'),
+                             errors=perlidl_errs,
                              requires=('MISSING REQUIRED OUTPUT',
                                        'MORE missing output',
                                        'APPending')),
