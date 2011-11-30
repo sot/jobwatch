@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 
-from jobwatch import FileWatch, SkaJobWatch, SkaDbWatch, make_html_summary
 import jobwatch
+from jobwatch import (FileWatch, SkaJobWatch, SkaDbWatch,
+                      make_html_summary, SkaWebWatch)
 
-dbs = 1 or [
+dbs = [
     SkaDbWatch('acq_stats_data', 4),
     SkaDbWatch('aiprops', 4),
     SkaDbWatch('cmds', -1, timekey='date'),
@@ -15,41 +16,43 @@ dbs = 1 or [
     ]
 
 
-class WebWatch(FileWatch):
-    def __init__(self, task, maxage, basename,
-                 filename='/proj/sot/ska/www/ASPECT/{task}/{basename}'):
-        self.basename = basename
-        super(WebWatch, self).__init__(task, maxage, filename)
-
-
-files = 1 or [
-    WebWatch('acq_stat_reports', 10, 'index.html'),
-    WebWatch('arc', 1, 'index.html'),
-    WebWatch('celmon', 30, 'offsets-ACIS-S-hist.gif'),
+files = [
+    SkaWebWatch('acq_stat_reports', 10, 'index.html'),
+    SkaWebWatch('arc', 1, 'index.html'),
+    SkaWebWatch('celmon', 30, 'offsets-ACIS-S-hist.gif'),
     FileWatch('dsn_summary', 1,
               '/proj/sot/ska/data/dsn_summary/dsn_summary.dat'),
-    WebWatch('gui_stat_reports', 10, 'index.html'),
-    WebWatch('fid_drift', 2, 'drift_acis_s.png'),
-    WebWatch('obc_rate_noise', 50, 'trending/pitch_hist_recent.png'),
-    WebWatch('perigee_health_plots', 5, 'index.html'),
+    SkaWebWatch('gui_stat_reports', 10, 'index.html'),
+    SkaWebWatch('fid_drift', 2, 'drift_acis_s.png'),
+    SkaWebWatch('obc_rate_noise', 50, 'trending/pitch_hist_recent.png'),
+    SkaWebWatch('perigee_health_plots', 5, 'index.html'),
     ]
 
+
+def copy_errs(vals, removes=[], adds=[]):
+    newvals = set(vals) - set(removes)
+    newvals.update(adds)
+    return newvals
+
+
+py_errs = set(jobwatch.ERRORS)
 perl_errs = set(('uninitialized value',
                  '(?<!Program caused arithmetic )error',
                  'warn', 'fatal', 'fail', 'undefined value'))
-arc_errs = perl_errs.copy()
-arc_errs.remove('warn')
-arc_errs.add('warning(?!:\s+\d+\s)')
-py_errs = set(jobwatch.ERRORS)
-jean_db = '/proj/sot/ska/data/database/Logs/daily.0/{task}.log'
-nmass_errs = set(('error', 'fatal', 'exception', 'traceback',
-                  'warn(?!ing: imaging routines will not be available)',
-                  'fail(?!ed to import sherpa)'))
-star_stat = '/proj/sot/ska/data/star_stat_db/Logs/daily.0/{task}.log'
+arc_errs = copy_errs(perl_errs, ['warn'], ['warning(?!:\s+\d+\s)'])
+nmass_errs = copy_errs(py_errs, ('warn', 'fail'),
+                       ('warn(?!ing: imaging routines will not be available)',
+                        'fail(?!ed to import sherpa)'))
 
-psmc_errs = set(jobwatch.ERRORS)
-psmc_errs.remove('traceback')
-psmc_errs.add("traceback(?!': True)")
+psmc_errs = copy_errs(py_errs.union(perl_errs), ['traceback'],
+                      ["traceback(?!': True)"])
+telem_archive_errs = copy_errs(py_errs, ['fail'],
+                               ['(?<!...)fail(?!...)'])
+perigee_errs = copy_errs(py_errs, ['warn'],
+                         ['warn(?!ing: limit exceeded, dac of)'])
+
+jean_db = '/proj/sot/ska/data/database/Logs/daily.0/{task}.log'
+star_stat = '/proj/sot/ska/data/star_stat_db/Logs/daily.0/{task}.log'
 
 jobs = [
     SkaJobWatch('aca_bgd_mon', 40, errors=perl_errs,
@@ -74,12 +77,11 @@ jobs = [
     SkaJobWatch('vv_database', 2, filename=jean_db),
     SkaJobWatch('nmass', 8, errors=nmass_errs, logtask='trend_nmass'),
     SkaJobWatch('psmc', 2, logtask='psmc_daily_check', errors=psmc_errs),
-    SkaJobWatch('scs107', 2, logtask='scs107_check'),
-    SkaJobWatch('telem_archive', 2, errors=py_errs.union(perl_errs)),
+    SkaJobWatch('scs107', 2, logdir='Logs', logtask='scs107_check'),
+    SkaJobWatch('telem_archive', 2, errors=telem_archive_errs),
     SkaJobWatch('cmd_states', 2),
     SkaJobWatch('perigee_health_plots', 2, logdir='Logs'),
     ]
 
 
-# dbs + files +
-make_html_summary(jobs, outdir='ska')
+make_html_summary(dbs + files + jobs, outdir='ska')

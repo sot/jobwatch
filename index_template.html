@@ -60,15 +60,18 @@
     <h1>Ska Job Status: {{rundate}}</h1>
 
     <table border=1>
-      <tr><th>Type</th> <th>Task</th> <th>Status</th> <th>Age</th><th>MaxAge</th> <th>Last Date</th> </tr>
+      <tr><th>Task</th> <th>Status</th> <th>Age</th><th>MaxAge</th> <th>Last Date</th> </tr>
       {% for row in status_rows %}
+      {% if row['task'] %}
       <tr>
-        <td>{{row['type']}}</td>
         <td><a href="{{row['log_html']}}">{{row['task']}}</a></td> 
         <td>{% if row['ok'] %}OK{% else %}<span class="red">NOT OK</span>{% endif %}</td>
         <td>{{row['age']}}</td><td>{{"%.1f"|format(row['maxage'])}}</td>
         <td>{{row['filedate']}}</td>
       </tr>
+      {% else %}
+      <tr> <th colspan=6> {{row['type']}} </th> </tr>
+      {% endif %}
       {% endfor %}
     </table>
     <hr>

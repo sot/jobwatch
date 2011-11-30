@@ -98,6 +98,13 @@ class FileWatch(JobWatch):
         return []
 
 
+class SkaWebWatch(FileWatch):
+    def __init__(self, task, maxage, basename,
+                 filename='/proj/sot/ska/www/ASPECT/{task}/{basename}'):
+        self.basename = basename
+        super(SkaWebWatch, self).__init__(task, maxage, filename)
+
+
 class SkaJobWatch(JobWatch):
     def __init__(self, task, maxage=1, errors=ERRORS, requires=(),
                  logdir='logs', logtask=None,
@@ -167,6 +174,8 @@ def make_html_summary(jobwatches, outdir='out',
 
         log_html_name = 'log{}.html'.format(i_jw)
         age = '{:.2f}'.format(jw.age) if jw.exists else 'None'
+        if i_jw == 0 or jw.type != rows[-1]['type']:
+            rows.append({'type': jw.type, 'task': None})
         rows.append({'ok': ok, 'task': jw.task, 'log_html': log_html_name,
                      'filedate': jw.filedate, 'age': age,
                      'type': jw.type, 'maxage': jw.maxage})
