@@ -5,6 +5,10 @@ Watch log output from processing jobs and check for problems.
 import re
 import os
 import time
+import smtplib
+from email.mime.text import MIMEText
+import shutil
+
 import jinja2
 import Ska.DBI
 from Chandra.Time import DateTime
@@ -157,9 +161,11 @@ class SkaDbWatch(JobWatch):
         return self._db
 
 
-def make_html_summary(jobwatches, outdir='out',
+def make_html_report(jobwatches, outdir='out',
                      index_template='index_template.html',
                      log_template='log_template.html'):
+    if not os.path.exists(outdir):
+        os.mkdir(outdir)
     filedir = os.path.dirname(__file__)
     error_line = '<a name=error{0}><span class="red">{1}</span></a>'
 
@@ -204,3 +210,32 @@ def make_html_summary(jobwatches, outdir='out',
     outfile = open(os.path.join(outdir, 'index.html'), 'w')
     outfile.write(index_html)
     outfile.close()
+
+    return index_html
+
+
+def remove_old_reports(rootdir, date_now, max_age):
+    secs_now = DateTime(date_now).secs
+    for age in range(max_age, max_age + 30):
+        date = DateTime(secs_now - age * 86400).greta[:7]
+        outdir = os.path.join(rootdir, date)
+        if os.path.exists(outdir):
+            print 'Removing', outdir
+            shutil.rmtree(outdir)
+
+
+def sendmail(recipients, html):
+    me = os.environ['user'] + '@head.cfa.harvard.edu'
+    msg = MIMEText(html, 'html')
+    msg['Subject'] = 'Skawatch monitor'
+    msg['From'] = me
+    msg['To'] = ','.join(recipients)
+    s = smtplib.SMTP('localhost')
+    s.sendmail(me, recipients, msg.as_string())
+    s.quit()
+
+
+def copy_errs(vals, removes=[], adds=[]):
+    newvals = set(vals) - set(removes)
+    newvals.update(adds)
+    return newvals

@@ -1,10 +1,30 @@
 #!/usr/bin/env python
 
+import os
+import argparse
 import jobwatch
 from jobwatch import (FileWatch, SkaJobWatch, SkaDbWatch,
-                      make_html_summary, SkaWebWatch)
+                      make_html_report, SkaWebWatch, copy_errs)
+from Chandra.Time import DateTime
 
-dbs = [
+parser = argparse.ArgumentParser(description='Ska processing monitor')
+parser.add_argument('--date-now',
+                    help='Processing date')
+parser.add_argument('--rootdir',
+                    default='.',
+                    help='Output root directory')
+parser.add_argument('--email',
+                    action='store_true',
+                    help='Send email report')
+parser.add_argument('--max-age',
+                    type=int,
+                    default=30,
+                    help='Maximum age of watch reports')
+args = parser.parse_args()
+
+jws = []
+if 0:
+    jws.extend([
     SkaDbWatch('acq_stats_data', 4),
     SkaDbWatch('aiprops', 4),
     SkaDbWatch('cmds', -1, timekey='date'),
@@ -13,10 +33,9 @@ dbs = [
     SkaDbWatch('obspar', 4),
     SkaDbWatch('starcheck_obs', 4, timekey='mp_starcat_time'),
     SkaDbWatch('trak_stats_data', 4, timekey='kalman_tstart'),
-    ]
+    ])
 
-
-files = [
+jws.extend([
     SkaWebWatch('acq_stat_reports', 10, 'index.html'),
     SkaWebWatch('arc', 1, 'index.html'),
     SkaWebWatch('celmon', 30, 'offsets-ACIS-S-hist.gif'),
@@ -26,13 +45,7 @@ files = [
     SkaWebWatch('fid_drift', 2, 'drift_acis_s.png'),
     SkaWebWatch('obc_rate_noise', 50, 'trending/pitch_hist_recent.png'),
     SkaWebWatch('perigee_health_plots', 5, 'index.html'),
-    ]
-
-
-def copy_errs(vals, removes=[], adds=[]):
-    newvals = set(vals) - set(removes)
-    newvals.update(adds)
-    return newvals
+    ])
 
 
 py_errs = set(jobwatch.ERRORS)
@@ -54,7 +67,8 @@ perigee_errs = copy_errs(py_errs, ['warn'],
 jean_db = '/proj/sot/ska/data/database/Logs/daily.0/{task}.log'
 star_stat = '/proj/sot/ska/data/star_stat_db/Logs/daily.0/{task}.log'
 
-jobs = [
+if 0:
+    jws.extend([
     SkaJobWatch('aca_bgd_mon', 40, errors=perl_errs,
                 requires=('Copying plots and log file '
                           'to /proj/sot/ska/www/ASPECT',)),
@@ -81,7 +95,17 @@ jobs = [
     SkaJobWatch('telem_archive', 2, errors=telem_archive_errs),
     SkaJobWatch('cmd_states', 2),
     SkaJobWatch('perigee_health_plots', 2, logdir='Logs'),
-    ]
+    ])
 
 
-make_html_summary(dbs + files + jobs, outdir='ska')
+date_now = DateTime(args.date_now).greta[:7]
+outdir = os.path.join(args.rootdir, date_now)
+html = make_html_report(jws, outdir=outdir)
+recipients = ['aldcroft@gmail.com',  # 'head.cfa.harvard.edu',
+              # 'jeanconn@head.cfa.harvard.edu'
+              ]
+
+if args.email:
+    jobwatch.sendmail(recipients, html)
+
+jobwatch.remove_old_reports(args.rootdir, args.date_now, args.max_age)
