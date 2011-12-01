@@ -1,14 +1,20 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
   <head>
+    <script type="text/javascript" src="../overlib.js"></script>
     <link href="/mta/ASPECT/aspect.css" rel="stylesheet" type="text/css" media="all" />
     <style type="text/css"></style>
-    <title>Ska Job Statusss</title>
+    <title>Ska Job Status: {{rundate}}</title>
   </head>
 
-  <body>
-    <!--#include virtual="/incl/header.html"-->
+  <body>  
+    <div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>
+   <a href="{{prev_prefix}}index.html">Prev</a> &nbsp;
+   <a href="{{curr_prefix}}index.html">Index</a> &nbsp;
+   <a href="{{next_prefix}}index.html">Next</a>
+
     <h1>Ska Job Status: {{rundate}}</h1>
+
 
     <table border=1>
       <tr><th>Task</th> <th>Status</th> <th>Age</th><th>MaxAge</th> <th>Last Date</th> </tr>
@@ -17,8 +23,15 @@
         <tr> <th colspan=5> {{row['type']}} </th> </tr>
       {% else %}
         <tr>
-          <td><a href="{{row['log_html_name']}}">{{row['task']}}</a></td> 
-          <td>{% if row['ok'] %}OK{% else %}<span style="color:red">NOT OK</span>{% endif %}</td>
+          <td><a href="{{row['http_prefix']}}{{row['log_html_name']}}">
+              {{row['task']}}</a></td> 
+          <td>{% if row['ok'] %}
+                OK
+              {% else %}
+                <a href="{{row['http_prefix']}}{{row['log_html_name']}}" 
+                  style="color:red" {{row['overlib']}}>NOT OK</a>
+              {% endif %}
+          </td>
           <td>{{row['age_str']}}</td><td>{{"%.1f"|format(row['maxage'])}}</td>
           <td>{{row['filedate']}}</td>
         </tr>

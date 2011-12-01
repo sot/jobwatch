@@ -1,33 +1,49 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
   <head>
-    <style type="text/css">
-    .red { color: #ff0000; }
-    </style>
+    <link href="/mta/ASPECT/aspect.css" rel="stylesheet" type="text/css" media="all" />
     <title>{{task}}</title>
   </head>
 
   <body>
-    <a href="index.html">Index</a>
+    <a href="{{prev_http_prefix}}{{log_html_name}}">Prev</a> &nbsp;
+    <a href="index.html">Index</a> &nbsp;
+    <a href="{{next_http_prefix}}{{log_html_name}}">Next</a>
+
     <h1>{{task}}: {{filedate}}</h1>
-    <h2>{{filename}}</h2>
+    <h2>File: {{abs_filename}}</h2>
+
+    <table border=1>
+      <tr><th>Task</th> <th>Status</th> <th>Age</th><th>MaxAge</th> <th>Last Date</th> </tr>
+      <tr>
+        <td>{{task}}</td> 
+        <td>{% if ok %} OK {% else %}
+            <span style="color:red">NOT OK</span>
+            {% endif %}
+        </td>
+        <td>{{age_str}}</td><td>{{"%.1f"|format(maxage)}}</td>
+        <td>{{filedate}}</td>
+      </tr>
+    </table>
 
     {% if missing_requires %}
-    <h2> Missing required outputs </h2>
+    <h2> Missing required outputs: </h2>
     <ul> {% for missing_require in missing_requires %}<li>{{ missing_require}}</li>{% endfor %}</ul>
     {% endif %}
 
     {% if found_errors %}
-    <h2> Errors </h2>
+    <h2> Errors: </h2>
     <ul> 
     {% for found_error in found_errors %}
       <li><a href="#error{{found_error[0]}}">Line {{found_error[0]}}</a>: {{ found_error[1]}}</li>
     {% endfor %}
     </ul>
+    {% else %}
+    <h2> No errors </h2>
     {% endif %}
 
     {% if html_lines %}
-    <h2>File contents</h2>
+    <h2>File contents:</h2>
     <span style="font-family:monospace;">
     {{html_lines}}
     </span>

@@ -20,6 +20,7 @@ FILEDIR = os.path.dirname(__file__)
 INDEX_TEMPLATE = os.path.join(FILEDIR, 'index_template.html')
 LOG_TEMPLATE = os.path.join(FILEDIR, 'log_template.html')
 
+
 class JobWatch(object):
     def __init__(self, task, filename,
                  errors=(),
@@ -172,25 +173,57 @@ def set_report_attrs(jobwatches):
                                    jw.missing_requires or
                                    jw.found_errors)
 
-        jw.abs_filename = os.path.abspath(jw.filename),
+        jw.abs_filename = os.path.abspath(jw.filename)
         jw.log_html_name = 'log{}.html'.format(i_jw)
         jw.age_str = '{:.2f}'.format(jw.age) if jw.exists else 'None'
+        if jw.stale:
+            jw.age_str = '<span style="color:red";>{}</span>'.format(
+                jw.age_str)
         if i_jw == 0 or jw.type != jobwatches[i_jw - 1].type:
             jw.span_cols_text = jw.type
+
+        maxerrs = 10
+        if not jw.ok and jw.found_errors:
+            popups = [re.sub(r'[\'"]', '', line.strip())
+                      for _, line, _ in jw.found_errors[:maxerrs]]
+            if len(jw.found_errors) > maxerrs:
+                popups.append('AND {} MORE'.format(
+                        len(jw.found_errors) - maxerrs))
+            popup = '<br/>'.join(popups)
+            jw.overlib = ('ONMOUSEOVER="return overlib (\'{}\', WIDTH, 600);" '
+                          'ONMOUSEOUT="return nd();"'.format(popup))
 
         html_lines = list(jw.filelines)
         for i_line, line, error in jw.found_errors:
             html_lines[i_line] = error_line.format(i_line, line)
         jw.html_lines = '<br/>'.join(html_lines)
 
+        jw.prev_index = ''
 
-def make_html_report(jobwatches, rootdir, dirname):
-    outdir = os.path.join(rootdir, dirname)
+
+def rundate(datenow):
+    now = DateTime(datenow)
+    return '{} ({})'.format(
+        now.date[:8], time.strftime('%a %b %d', time.gmtime(now.unix)))
+
+
+def make_html_report(jobwatches, rootdir, datenow):
+    currdir = DateTime(datenow).greta[:7]
+    prevdir = (DateTime(datenow) - 1).greta[:7]
+    nextdir = (DateTime(datenow) + 1).greta[:7]
+    outdir = os.path.join(rootdir, currdir)
     if not os.path.exists(outdir):
         os.mkdir(outdir)
 
     log_template = jinja2.Template(open(LOG_TEMPLATE, 'r').read())
+    root_prefix = '../{}/'
+    curr_prefix = ''
+    prev_prefix = root_prefix.format(prevdir)
+    next_prefix = root_prefix.format(nextdir)
     for i_jw, jw in enumerate(jobwatches):
+        jw.http_prefix = curr_prefix
+        jw.prev_http_prefix = prev_prefix
+        jw.next_http_prefix = next_prefix
         log_html = log_template.render(**jw.__dict__)
 
         outfile = open(os.path.join(outdir, jw.log_html_name), 'w')
@@ -199,7 +232,10 @@ def make_html_report(jobwatches, rootdir, dirname):
 
     index_template = jinja2.Template(open(INDEX_TEMPLATE, 'r').read())
     index_html = index_template.render(jobwatches=jobwatches,
-                                       rundate=time.ctime(),
+                                       rundate=rundate(datenow),
+                                       curr_prefix=curr_prefix,
+                                       next_prefix=next_prefix,
+                                       prev_prefix=prev_prefix,
                                        )
 
     outfile = open(os.path.join(outdir, 'index.html'), 'w')
@@ -207,11 +243,20 @@ def make_html_report(jobwatches, rootdir, dirname):
     outfile.close()
 
     # Set an absolute http_prefix for the emailed version of index.html
+    root_prefix = 'http://cxc.harvard.edu/mta/ASPECT/skawatch/{}/'
+    curr_prefix = root_prefix.format(currdir)
+    prev_prefix = root_prefix.format(prevdir)
+    next_prefix = root_prefix.format(nextdir)
     for jw in jobwatches:
-        jw.http_prefix = ('http://cxc.harvard.edu/mta/ASPECT/skawatch/{}'
-                          .format(dirname))
+        jw.http_prefix = root_prefix.format(currdir)
+        jw.prev_http_prefix = root_prefix.format(prevdir)
+        jw.next_http_prefix = root_prefix.format(nextdir)
     index_html = index_template.render(jobwatches=jobwatches,
-                                       rundate=time.ctime())
+                                       rundate=rundate(datenow),
+                                       curr_prefix=curr_prefix,
+                                       next_prefix=next_prefix,
+                                       prev_prefix=prev_prefix,
+                                       )
 
     return index_html
 
@@ -222,14 +267,13 @@ def remove_old_reports(rootdir, date_now, max_age):
         date = DateTime(secs_now - age * 86400).greta[:7]
         outdir = os.path.join(rootdir, date)
         if os.path.exists(outdir):
-            print 'Removing', outdir
             shutil.rmtree(outdir)
 
 
-def sendmail(recipients, html):
-    me = os.environ['user'] + '@head.cfa.harvard.edu'
+def sendmail(recipients, html, datenow):
+    me = os.environ['USER'] + '@head.cfa.harvard.edu'
     msg = MIMEText(html, 'html')
-    msg['Subject'] = 'Skawatch monitor'
+    msg['Subject'] = 'Ska job status: {}'.format(rundate(datenow))
     msg['From'] = me
     msg['To'] = ','.join(recipients)
     s = smtplib.SMTP('localhost')
