@@ -94,9 +94,7 @@ jws.extend([
 
 set_report_attrs(jws)
 index_html = make_html_report(jws, args.rootdir, args.date_now)
-recipients = ['taldcroft@gmail.com',  # 'head.cfa.harvard.edu',
-              # 'jeanconn@head.cfa.harvard.edu'
-              ]
+recipients = ['aca@head.cfa.harvard.edu']
 
 if args.email:
     jobwatch.sendmail(recipients, index_html, args.date_now)
