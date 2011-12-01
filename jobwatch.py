@@ -16,6 +16,9 @@ from Chandra.Time import DateTime
 LOUD = False
 ERRORS = ('error', 'warn', 'fail', 'fatal', 'exception', 'traceback')
 
+FILEDIR = os.path.dirname(__file__)
+INDEX_TEMPLATE = os.path.join(FILEDIR, 'index_template.html')
+LOG_TEMPLATE = os.path.join(FILEDIR, 'log_template.html')
 
 class JobWatch(object):
     def __init__(self, task, filename,
@@ -161,55 +164,54 @@ class SkaDbWatch(JobWatch):
         return self._db
 
 
-def make_html_report(jobwatches, outdir='out',
-                     index_template='index_template.html',
-                     log_template='log_template.html'):
-    if not os.path.exists(outdir):
-        os.mkdir(outdir)
-    filedir = os.path.dirname(__file__)
+def set_report_attrs(jobwatches):
     error_line = '<a name=error{0}><span class="red">{1}</span></a>'
 
-    if not os.path.isabs(log_template):
-        log_template = os.path.join(filedir, log_template)
-    template = jinja2.Template(open(log_template, 'r').read())
-
-    rows = []
     for i_jw, jw in enumerate(jobwatches):
-        ok = jw.exists and not (jw.stale or jw.missing_requires or
-                                jw.found_errors)
+        jw.ok = jw.exists and not (jw.stale or
+                                   jw.missing_requires or
+                                   jw.found_errors)
 
-        log_html_name = 'log{}.html'.format(i_jw)
-        age = '{:.2f}'.format(jw.age) if jw.exists else 'None'
-        if i_jw == 0 or jw.type != rows[-1]['type']:
-            rows.append({'type': jw.type, 'task': None})
-        rows.append({'ok': ok, 'task': jw.task, 'log_html': log_html_name,
-                     'filedate': jw.filedate, 'age': age,
-                     'type': jw.type, 'maxage': jw.maxage})
+        jw.abs_filename = os.path.abspath(jw.filename),
+        jw.log_html_name = 'log{}.html'.format(i_jw)
+        jw.age_str = '{:.2f}'.format(jw.age) if jw.exists else 'None'
+        if i_jw == 0 or jw.type != jobwatches[i_jw - 1].type:
+            jw.span_cols_text = jw.type
 
-        filelines = list(jw.filelines)
+        html_lines = list(jw.filelines)
         for i_line, line, error in jw.found_errors:
-            filelines[i_line] = error_line.format(i_line, filelines[i_line])
+            html_lines[i_line] = error_line.format(i_line, line)
+        jw.html_lines = '<br/>'.join(html_lines)
 
-        log_html = template.render(task=jw.task,
-                                   filename=os.path.abspath(jw.filename),
-                                   filelines='<br/>'.join(filelines),
-                                   found_errors=jw.found_errors,
-                                   missing_requires=jw.missing_requires,
-                                   filedate=jw.filedate)
-        outfile = open(os.path.join(outdir, log_html_name), 'w')
+
+def make_html_report(jobwatches, rootdir, dirname):
+    outdir = os.path.join(rootdir, dirname)
+    if not os.path.exists(outdir):
+        os.mkdir(outdir)
+
+    log_template = jinja2.Template(open(LOG_TEMPLATE, 'r').read())
+    for i_jw, jw in enumerate(jobwatches):
+        log_html = log_template.render(**jw.__dict__)
+
+        outfile = open(os.path.join(outdir, jw.log_html_name), 'w')
         outfile.write(log_html)
         outfile.close()
 
-    if not os.path.isabs(index_template):
-        index_template = os.path.join(filedir, index_template)
-    template = jinja2.Template(open(index_template, 'r').read())
-    index_html = template.render(status_rows=rows,
-                                 rundate=time.ctime(),
-                                 )
+    index_template = jinja2.Template(open(INDEX_TEMPLATE, 'r').read())
+    index_html = index_template.render(jobwatches=jobwatches,
+                                       rundate=time.ctime(),
+                                       )
 
     outfile = open(os.path.join(outdir, 'index.html'), 'w')
     outfile.write(index_html)
     outfile.close()
+
+    # Set an absolute http_prefix for the emailed version of index.html
+    for jw in jobwatches:
+        jw.http_prefix = ('http://cxc.harvard.edu/mta/ASPECT/skawatch/{}'
+                          .format(dirname))
+    index_html = index_template.render(jobwatches=jobwatches,
+                                       rundate=time.ctime())
 
     return index_html
 

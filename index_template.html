@@ -12,16 +12,16 @@
 
     <table border=1>
       <tr><th>Task</th> <th>Status</th> <th>Age</th><th>MaxAge</th> <th>Last Date</th> </tr>
-      {% for row in status_rows %}
-      {% if row['task'] %}
-      <tr>
-        <td><a href="{{row['log_html']}}">{{row['task']}}</a></td> 
-        <td>{% if row['ok'] %}OK{% else %}<span style="color:red">NOT OK</span>{% endif %}</td>
-        <td>{{row['age']}}</td><td>{{"%.1f"|format(row['maxage'])}}</td>
-        <td>{{row['filedate']}}</td>
-      </tr>
+      {% for row in jobwatches %}
+      {% if row['span_cols_text'] %}
+        <tr> <th colspan=5> {{row['type']}} </th> </tr>
       {% else %}
-      <tr> <th colspan=6> {{row['type']}} </th> </tr>
+        <tr>
+          <td><a href="{{row['log_html_name']}}">{{row['task']}}</a></td> 
+          <td>{% if row['ok'] %}OK{% else %}<span style="color:red">NOT OK</span>{% endif %}</td>
+          <td>{{row['age_str']}}</td><td>{{"%.1f"|format(row['maxage'])}}</td>
+          <td>{{row['filedate']}}</td>
+        </tr>
       {% endif %}
       {% endfor %}
     </table>

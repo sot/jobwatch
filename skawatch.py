@@ -4,7 +4,8 @@ import os
 import argparse
 import jobwatch
 from jobwatch import (FileWatch, SkaJobWatch, SkaDbWatch,
-                      make_html_report, SkaWebWatch, copy_errs)
+                      make_html_report, SkaWebWatch, copy_errs,
+                      set_report_attrs)
 from Chandra.Time import DateTime
 
 parser = argparse.ArgumentParser(description='Ska processing monitor')
@@ -67,7 +68,7 @@ perigee_errs = copy_errs(py_errs, ['warn'],
 jean_db = '/proj/sot/ska/data/database/Logs/daily.0/{task}.log'
 star_stat = '/proj/sot/ska/data/star_stat_db/Logs/daily.0/{task}.log'
 
-if 0:
+if 1:
     jws.extend([
     SkaJobWatch('aca_bgd_mon', 40, errors=perl_errs,
                 requires=('Copying plots and log file '
@@ -98,14 +99,15 @@ if 0:
     ])
 
 
-date_now = DateTime(args.date_now).greta[:7]
-outdir = os.path.join(args.rootdir, date_now)
-html = make_html_report(jws, outdir=outdir)
+set_report_attrs(jws)
+basedir = DateTime(args.date_now).greta[:7]
+index_html = make_html_report(jws, args.rootdir, basedir)
+
 recipients = ['aldcroft@gmail.com',  # 'head.cfa.harvard.edu',
               # 'jeanconn@head.cfa.harvard.edu'
               ]
 
 if args.email:
-    jobwatch.sendmail(recipients, html)
+    jobwatch.sendmail(recipients, index_html)
 
 jobwatch.remove_old_reports(args.rootdir, args.date_now, args.max_age)
