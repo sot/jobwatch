@@ -2,9 +2,39 @@
 
 import argparse
 import jobwatch
-from jobwatch import (FileWatch, SkaJobWatch, SkaDbWatch,
-                      make_html_report, SkaWebWatch, copy_errs,
+from jobwatch import (FileWatch, JobWatch, DbWatch,
+                      make_html_report, copy_errs,
                       set_report_attrs)
+
+
+# Ska-specific watchers
+class SkaWebWatch(FileWatch):
+    def __init__(self, task, maxage, basename,
+                 filename='/proj/sot/ska/www/ASPECT/{task}/{basename}'):
+        self.basename = basename
+        super(SkaWebWatch, self).__init__(task, maxage, filename)
+
+
+class SkaJobWatch(JobWatch):
+    def __init__(self, task, maxage=1, errors=jobwatch.ERRORS, requires=(),
+                 logdir='logs', logtask=None,
+                 filename='/proj/sot/ska/data/{task}/' \
+                         '{logdir}/daily.0/{logtask}.log'):
+        self.type = 'Log'
+        self.task = task
+        self.logtask = logtask or task
+        self.logdir = logdir
+        super(SkaJobWatch, self).__init__(task, filename, errors=errors,
+                                          requires=requires, maxage=maxage)
+
+
+class SkaDbWatch(DbWatch):
+    def __init__(self, task, maxage=1, table=None, timekey='tstart'):
+        super(SkaDbWatch, self).__init__(
+            task, maxage=maxage, table=table, timekey=timekey,
+            query='SELECT MAX({timekey}) AS maxtime FROM {table}',
+            dbi='sybase', server='sybase', user='aca_read', database='aca')
+
 
 parser = argparse.ArgumentParser(description='Ska processing monitor')
 parser.add_argument('--date-now',
@@ -15,14 +45,19 @@ parser.add_argument('--rootdir',
 parser.add_argument('--email',
                     action='store_true',
                     help='Send email report')
+parser.add_argument('--loud',
+                    action='store_true',
+                    help='Send email report')
 parser.add_argument('--max-age',
                     type=int,
                     default=30,
                     help='Maximum age of watch reports')
 args = parser.parse_args()
 
+jobwatch.LOUD = args.loud
+
 # Customized errors and paths
-py_errs = set(jobwatch.ERRORS)
+py_errs = set(('error', 'warn', 'fail', 'fatal', 'exception', 'traceback'))
 perl_errs = set(('uninitialized value',
                  '(?<!Program caused arithmetic )error',
                  'warn', 'fatal', 'fail', 'undefined value'))
@@ -36,6 +71,14 @@ telem_archive_errs = copy_errs(py_errs, ['fail'],
                                ['(?<!...)fail(?!...)'])
 perigee_errs = copy_errs(py_errs, ['warn'],
                          ['warn(?!ing: limit exceeded, dac of)'])
+astromon_errs = ('uninitialized value', 'warn', 'fatal', 'fail',
+                 'undefined value',
+                 'ERROR(?!: Data::ParseTable: FITS ' +
+                 'files cannot be passed as arrays)')
+engarchive_errs = copy_errs(py_errs, ['fail'],
+                             ['(?<!5OHW)FAIL'])
+perigee_errs = copy_errs(py_errs, ['warn'],
+                         ['warning(?!: Limit Exceeded. dac of)'])
 jean_db = '/proj/sot/ska/data/database/Logs/daily.0/{task}.log'
 star_stat = '/proj/sot/ska/data/star_stat_db/Logs/daily.0/{task}.log'
 
@@ -45,12 +88,11 @@ jws.extend([
                 requires=('Copying plots and log file '
                           'to /proj/sot/ska/www/ASPECT',)),
     SkaJobWatch('arc', 2, errors=arc_errs, logdir='Logs'),
-    SkaJobWatch('astromon', 8, errors=perl_errs),
+    SkaJobWatch('astromon', 8, errors=astromon_errs),
     SkaJobWatch('dsn_summary', 2, errors=perl_errs),
-    SkaJobWatch('eng_archive', 2),
+    SkaJobWatch('eng_archive', 2, errors=engarchive_errs),
     SkaJobWatch('fid_drift_mon', 2, errors=py_errs.union(perl_errs)),
     SkaJobWatch('star_stats', 2, filename=star_stat),
-    SkaJobWatch('acq_stats', 2, filename=star_stat),
     SkaJobWatch('timelines', 2, logdir='Logs'),
     SkaJobWatch('taco', 8),
     SkaJobWatch('acq_database', 2, filename=jean_db),
@@ -66,7 +108,8 @@ jws.extend([
     SkaJobWatch('scs107', 2, logdir='Logs', logtask='scs107_check'),
     SkaJobWatch('telem_archive', 2, errors=telem_archive_errs),
     SkaJobWatch('cmd_states', 2),
-    SkaJobWatch('perigee_health_plots', 2, logdir='Logs'),
+    SkaJobWatch('perigee_health_plots', 2, logdir='Logs',
+                errors=perigee_errs),
     ])
 
 jws.extend([

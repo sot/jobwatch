@@ -21,21 +21,20 @@
       {% for row in jobwatches %}
       {% if row['span_cols_text'] %}
         <tr> <th colspan=5> {{row['type']}} </th> </tr>
-      {% else %}
-        <tr>
-          <td><a href="{{row['http_prefix']}}{{row['log_html_name']}}">
-              {{row['task']}}</a></td> 
-          <td>{% if row['ok'] %}
-                OK
-              {% else %}
-                <a href="{{row['http_prefix']}}{{row['log_html_name']}}" 
-                  style="color:red" {{row['overlib']}}>NOT OK</a>
-              {% endif %}
-          </td>
-          <td>{{row['age_str']}}</td><td>{{"%.1f"|format(row['maxage'])}}</td>
-          <td>{{row['filedate']}}</td>
-        </tr>
       {% endif %}
+      <tr>
+        <td><a href="{{row['http_prefix']}}{{row['log_html_name']}}">
+            {{row['task']}}</a></td> 
+        <td>{% if row['ok'] %}
+              OK
+            {% else %}
+              <a href="{{row['http_prefix']}}{{row['log_html_name']}}" 
+                style="color:red" {{row['overlib']}}>NOT OK</a>
+            {% endif %}
+        </td>
+        <td>{{row['age_str']}}</td><td>{{"%.1f"|format(row['maxage'])}}</td>
+        <td>{{row['filedate']}}</td>
+      </tr>
       {% endfor %}
     </table>
     <hr>

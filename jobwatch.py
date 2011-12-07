@@ -66,7 +66,7 @@ class JobWatch(object):
     def check(self):
         if LOUD:
             print 'Checking ', repr(self)
-        if not self.exists:
+        if os.path.exists(self.filename + '.OK') or not self.exists:
             self.stale = False
             self.missing_requires = set()
             self.found_errors = []
@@ -79,6 +79,9 @@ class JobWatch(object):
         for i, line in enumerate(self.filelines):
             for error in self.errors:
                 if re.search(error, line, re.IGNORECASE):
+                    if LOUD:
+                        print 'MATCH: {}\n    {}'.format(
+                            error, line),
                     found_errors.append((i, line, error))
             for require in self.requires:
                 if re.search(require, line, re.IGNORECASE):
@@ -88,7 +91,7 @@ class JobWatch(object):
         self.found_errors = found_errors
 
     def __repr__(self):
-        return '<JobWatch type={} task={}>'
+        return '<JobWatch type={} task={}>'.format(self.type, self.task)
 
 
 class FileWatch(JobWatch):
@@ -106,35 +109,22 @@ class FileWatch(JobWatch):
         return []
 
 
-class SkaWebWatch(FileWatch):
-    def __init__(self, task, maxage, basename,
-                 filename='/proj/sot/ska/www/ASPECT/{task}/{basename}'):
-        self.basename = basename
-        super(SkaWebWatch, self).__init__(task, maxage, filename)
-
-
-class SkaJobWatch(JobWatch):
-    def __init__(self, task, maxage=1, errors=ERRORS, requires=(),
-                 logdir='logs', logtask=None,
-                 filename='/proj/sot/ska/data/{task}/' \
-                         '{logdir}/daily.0/{logtask}.log'):
-        self.type = 'Log'
-        self.task = task
-        self.logtask = logtask or task
-        self.logdir = logdir
-        super(SkaJobWatch, self).__init__(task, filename, errors=errors,
-                                          requires=requires, maxage=maxage)
-
-
-class SkaDbWatch(JobWatch):
+class DbWatch(JobWatch):
     def __init__(self, task, maxage=1, table=None, timekey='tstart',
-                 query='SELECT MAX({timekey}) AS maxtime FROM {table}'):
+                 query='SELECT MAX({timekey}) AS maxtime FROM {table}',
+                 dbi=None, server=None, user=None, database=None,
+                 passwd=None):
         self.type = 'DB'
         self.task = task
         self._query = query
         self.table = table or task
         self.timekey = timekey
-        super(SkaDbWatch, self).__init__(task, filename='NONE', maxage=maxage)
+        self.dbi = dbi
+        self.server = server
+        self.user = user
+        self.database = database
+        self.passwd = passwd
+        super(DbWatch, self).__init__(task, filename='NONE', maxage=maxage)
 
     @property
     def query(self):
@@ -160,8 +150,9 @@ class SkaDbWatch(JobWatch):
     @property
     def db(self):
         if not hasattr(self.__class__, '_db'):
-            self.__class__._db = Ska.DBI.DBI(dbi='sybase', server='sybase',
-                                             user='aca_read', database='aca')
+            self.__class__._db = Ska.DBI.DBI(
+                dbi=self.dbi, server=self.server, user=self.user,
+                database=self.database, passwd=self.passwd)
         return self._db
 
 
