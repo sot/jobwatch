@@ -129,7 +129,7 @@ jws.extend([
     SkaDbWatch('aiprops', 4),
     SkaDbWatch('cmds', -1, timekey='date'),
     SkaDbWatch('cmd_states', -1, timekey='datestart'),
-    SkaDbWatch('load_segments', -1, timekey='datestart'),
+    SkaDbWatch('load_segments', -1, timekey='datestop'),
     SkaDbWatch('obspar', 4),
     SkaDbWatch('starcheck_obs', 4, timekey='mp_starcat_time'),
     SkaDbWatch('trak_stats_data', 4, timekey='kalman_tstart'),
