@@ -93,7 +93,7 @@ jws.extend([
     SkaJobWatch('eng_archive', 2, errors=engarchive_errs),
     SkaJobWatch('fid_drift_mon', 2, errors=py_errs.union(perl_errs)),
     SkaJobWatch('star_stats', 2, filename=star_stat),
-    SkaJobWatch('timelines', 2, logdir='Logs'),
+    SkaJobWatch('timelines', 2, logtask='timelines_cmd_states', logdir='Logs'),
     SkaJobWatch('taco', 8),
     SkaJobWatch('acq_database', 2, filename=jean_db),
     SkaJobWatch('guide_database', 2, filename=jean_db),
@@ -107,7 +107,6 @@ jws.extend([
     SkaJobWatch('psmc', 2, logtask='psmc_daily_check', errors=psmc_errs),
     SkaJobWatch('scs107', 2, logdir='Logs', logtask='scs107_check'),
     SkaJobWatch('telem_archive', 2, errors=telem_archive_errs),
-    SkaJobWatch('cmd_states', 2),
     SkaJobWatch('perigee_health_plots', 2, logdir='Logs',
                 errors=perigee_errs),
     ])
