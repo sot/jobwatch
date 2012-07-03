@@ -114,6 +114,13 @@ jws.extend([
 jws.extend([
     SkaWebWatch('acq_stat_reports', 10, 'index.html'),
     SkaWebWatch('arc', 1, 'index.html'),
+    SkaWebWatch('arc', 1, 'chandra.snapshot'),
+    SkaWebWatch('arc', 1, 'hrc_shield.png'),
+    SkaWebWatch('arc', 1, 'GOES_xray.gif'),
+    SkaWebWatch('arc', 1, 'GOES_5min.gif'),
+    SkaWebWatch('arc', 1, 'solar_wind.gif'),
+    SkaWebWatch('arc', 1, 'solar_flare_monitor.png'),
+    SkaWebWatch('arc', 1, 'ACE_5min.gif'),
     SkaWebWatch('celmon', 30, 'offsets-ACIS-S-hist.gif'),
     FileWatch('dsn_summary', 1,
               '/proj/sot/ska/data/dsn_summary/dsn_summary.dat'),
