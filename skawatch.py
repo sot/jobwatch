@@ -76,7 +76,7 @@ astromon_errs = ('uninitialized value', 'warn', 'fatal', 'fail',
                  'ERROR(?!: Data::ParseTable: FITS ' +
                  'files cannot be passed as arrays)')
 engarchive_errs = copy_errs(py_errs, ['fail'],
-                             ['(?<!5OHW)FAIL'])
+                             ['(?<!5OHW)FAIL(?!MODE)'])
 perigee_errs = copy_errs(py_errs, ['warn'],
                          ['warning(?!: Limit Exceeded. dac of)'])
 jean_db = '/proj/sot/ska/data/database/Logs/daily.0/{task}.log'
