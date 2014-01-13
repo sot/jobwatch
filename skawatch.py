@@ -65,7 +65,7 @@ arc_errs = copy_errs(perl_errs, ['warn'], ['warning(?!:\s+\d+\s)'])
 nmass_errs = copy_errs(py_errs, ('warn', 'fail'),
                        ('warn(?!ing: imaging routines will not be available)',
                         'fail(?!ed to import sherpa)'))
-psmc_errs = copy_errs(py_errs.union(perl_errs), ['traceback'],
+trace_plus_errs = copy_errs(py_errs.union(perl_errs), ['traceback'],
                       ["traceback(?!': True)"])
 telem_archive_errs = copy_errs(py_errs, ['fail'],
                                ['(?<!...)fail(?!...)'])
@@ -104,7 +104,8 @@ jws.extend([
     SkaJobWatch('starcheck_database', 2, filename=jean_db),
     SkaJobWatch('vv_database', 2, filename=jean_db),
     SkaJobWatch('nmass', 8, errors=nmass_errs, logtask='trend_nmass'),
-    SkaJobWatch('psmc', 2, logtask='psmc_daily_check', errors=psmc_errs),
+    SkaJobWatch('psmc', 2, logtask='psmc_daily_check', errors=trace_plus_errs),
+    SkaJobWatch('validate_states', 2, errors=trace_plus_errs),
     SkaJobWatch('scs107', 2, logdir='Logs', logtask='scs107_check'),
     SkaJobWatch('telem_archive', 2, errors=telem_archive_errs),
     SkaJobWatch('perigee_health_plots', 2, logdir='Logs',
