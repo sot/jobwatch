@@ -104,7 +104,6 @@ jws.extend([
     SkaJobWatch('starcheck_database', 2, filename=jean_db),
     SkaJobWatch('vv_database', 2, filename=jean_db),
     SkaJobWatch('nmass', 8, errors=nmass_errs, logtask='trend_nmass'),
-    SkaJobWatch('psmc', 2, logtask='psmc_daily_check', errors=trace_plus_errs),
     SkaJobWatch('validate_states', 2, errors=trace_plus_errs),
     SkaJobWatch('scs107', 2, logdir='Logs', logtask='scs107_check'),
     SkaJobWatch('telem_archive', 2, errors=telem_archive_errs),
