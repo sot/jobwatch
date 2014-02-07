@@ -128,8 +128,8 @@ jws.extend([
               '/proj/sot/ska/data/dsn_summary/dsn_summary.dat'),
     SkaWebWatch('gui_stat_reports', 10, 'index.html'),
     SkaWebWatch('fid_drift', 2, 'drift_acis_s.png'),
-    SkaWebWatch('eng_archive', 1, '/proj/sot/ska/data/eng_archive/data/dp_pcad32/TIME.h5'),
-    SkaWebWatch('kadi', 1, '/proj/sot/ska/data/kadi/events.db3'),
+    SkaWebWatch('eng_archive', 1, '', filename='/proj/sot/ska/data/eng_archive/data/dp_pcad32/TIME.h5'),
+    SkaWebWatch('kadi', 1, '', filename='/proj/sot/ska/data/kadi/events.db3'),
     SkaWebWatch('obc_rate_noise', 50, 'trending/pitch_hist_recent.png'),
     SkaWebWatch('perigee_health_plots', 5, 'index.html'),
     ])
