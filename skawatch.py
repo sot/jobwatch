@@ -84,14 +84,16 @@ star_stat = '/proj/sot/ska/data/star_stat_db/Logs/daily.0/{task}.log'
 
 jws = []
 jws.extend([
-    SkaJobWatch('aca_bgd_mon', 40, errors=perl_errs,
+    SkaJobWatch('aca_bgd_mon', 400, errors=perl_errs,
                 requires=('Copying plots and log file '
                           'to /proj/sot/ska/www/ASPECT',)),
     SkaJobWatch('arc', 2, errors=arc_errs, logdir='Logs'),
     SkaJobWatch('astromon', 8, errors=astromon_errs),
     SkaJobWatch('dsn_summary', 2, errors=perl_errs),
-    SkaJobWatch('eng_archive', 2, errors=engarchive_errs),
+    SkaJobWatch('eng_archive', 1, errors=engarchive_errs,
+                requires=('Checking dp_pcad32 content',)),
     SkaJobWatch('fid_drift_mon', 2, errors=py_errs.union(perl_errs)),
+    SkaJobWatch('kadi', 1, errors=py_errs, requires=('Ska.ftp: close',)),  # Made it to the end
     SkaJobWatch('star_stats', 2, filename=star_stat),
     SkaJobWatch('timelines', 2, logtask='timelines_cmd_states', logdir='Logs'),
     SkaJobWatch('taco', 8),
@@ -126,6 +128,8 @@ jws.extend([
               '/proj/sot/ska/data/dsn_summary/dsn_summary.dat'),
     SkaWebWatch('gui_stat_reports', 10, 'index.html'),
     SkaWebWatch('fid_drift', 2, 'drift_acis_s.png'),
+    SkaWebWatch('eng_archive', 1, '/proj/sot/ska/data/eng_archive/data/dp_pcad32/TIME.h5'),
+    SkaWebWatch('kadi', 1, '/proj/sot/ska/data/kadi/events.db3'),
     SkaWebWatch('obc_rate_noise', 50, 'trending/pitch_hist_recent.png'),
     SkaWebWatch('perigee_health_plots', 5, 'index.html'),
     ])
