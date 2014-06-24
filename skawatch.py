@@ -96,6 +96,7 @@ jws.extend([
     SkaJobWatch('kadi', 1, errors=py_errs, requires=('Ska.ftp: close',)),  # Made it to the end
     SkaJobWatch('star_stats', 2, filename=star_stat),
     SkaJobWatch('timelines', 2, logtask='timelines_cmd_states', logdir='Logs'),
+    SkaJobWatch('mica', 2, errors=trace_plus_errs),
     SkaJobWatch('taco', 8),
     SkaJobWatch('acq_database', 2, filename=jean_db),
     SkaJobWatch('guide_database', 2, filename=jean_db),
