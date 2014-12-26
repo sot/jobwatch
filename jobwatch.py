@@ -199,7 +199,8 @@ def rundate(datenow):
         now.date[:8], time.strftime('%a %b %d', time.gmtime(now.unix)))
 
 
-def make_html_report(jobwatches, rootdir, datenow):
+def make_html_report(jobwatches, rootdir, datenow,
+                     index_template=INDEX_TEMPLATE):
     currdir = DateTime(datenow).greta[:7]
     prevdir = (DateTime(datenow) - 1).greta[:7]
     nextdir = (DateTime(datenow) + 1).greta[:7]
@@ -222,7 +223,7 @@ def make_html_report(jobwatches, rootdir, datenow):
         outfile.write(log_html)
         outfile.close()
 
-    index_template = jinja2.Template(open(INDEX_TEMPLATE, 'r').read())
+    index_template = jinja2.Template(open(index_template, 'r').read())
     index_html = index_template.render(jobwatches=jobwatches,
                                        rundate=rundate(datenow),
                                        curr_prefix=curr_prefix,
