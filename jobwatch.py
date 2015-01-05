@@ -199,24 +199,32 @@ def rundate(datenow):
         now.date[:8], time.strftime('%a %b %d', time.gmtime(now.unix)))
 
 
-def make_html_report(jobwatches, rootdir, datenow,
-                     index_template=INDEX_TEMPLATE):
-    currdir = DateTime(datenow).greta[:7]
-    prevdir = (DateTime(datenow) - 1).greta[:7]
-    nextdir = (DateTime(datenow) + 1).greta[:7]
-    outdir = os.path.join(rootdir, currdir)
+def make_html_report(jobwatches, rootdir, datenow=None,
+                     index_template=INDEX_TEMPLATE, just_status=False):
+    if just_status:
+        outdir = os.path.join(rootdir, 'status')
+    else:
+        currdir = DateTime(datenow).greta[:7]
+        prevdir = (DateTime(datenow) - 1).greta[:7]
+        nextdir = (DateTime(datenow) + 1).greta[:7]
+        outdir = os.path.join(rootdir, currdir)
     if not os.path.exists(outdir):
         os.mkdir(outdir)
 
     log_template = jinja2.Template(open(LOG_TEMPLATE, 'r').read())
     root_prefix = '../{}/'
     curr_prefix = ''
-    prev_prefix = root_prefix.format(prevdir)
-    next_prefix = root_prefix.format(nextdir)
+    if just_status:
+        prev_prefix = None
+        next_prefix= None
+    else:
+        prev_prefix = root_prefix.format(prevdir)
+        next_prefix = root_prefix.format(nextdir)
     for i_jw, jw in enumerate(jobwatches):
         jw.http_prefix = curr_prefix
-        jw.prev_http_prefix = prev_prefix
-        jw.next_http_prefix = next_prefix
+        if not just_status:
+            jw.prev_http_prefix = prev_prefix
+            jw.next_http_prefix = next_prefix
         log_html = log_template.render(**jw.__dict__)
 
         outfile = open(os.path.join(outdir, jw.log_html_name), 'w')
@@ -234,6 +242,9 @@ def make_html_report(jobwatches, rootdir, datenow,
     outfile = open(os.path.join(outdir, 'index.html'), 'w')
     outfile.write(index_html)
     outfile.close()
+
+    if just_status:
+        return index_html
 
     # Set an absolute http_prefix for the emailed version of index.html
     root_prefix = 'http://cxc.harvard.edu/mta/ASPECT/skawatch/{}/'

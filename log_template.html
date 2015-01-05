@@ -6,9 +6,11 @@
   </head>
 
   <body>
+    {% if prev_http_prefix %}
     <a href="{{prev_http_prefix}}{{log_html_name}}">Prev</a> &nbsp;
     <a href="index.html">Index</a> &nbsp;
     <a href="{{next_http_prefix}}{{log_html_name}}">Next</a>
+    {% endif %}
 
     <h1>{{task}}: {{filedate}}</h1>
     <h2>File: {{abs_filename}}</h2>
