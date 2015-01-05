@@ -274,10 +274,12 @@ def remove_old_reports(rootdir, date_now, max_age):
             shutil.rmtree(outdir)
 
 
-def sendmail(recipients, html, datenow):
+def sendmail(recipients, html, datenow, subject=None):
+    if subject == None:
+        subject = 'Ska job status: {}'.format(rundate(datenow))
     me = os.environ['USER'] + '@head.cfa.harvard.edu'
     msg = MIMEText(html, 'html')
-    msg['Subject'] = 'Ska job status: {}'.format(rundate(datenow))
+    msg['Subject'] = subject
     msg['From'] = me
     msg['To'] = ','.join(recipients)
     s = smtplib.SMTP('localhost')
