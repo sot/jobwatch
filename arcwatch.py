@@ -26,6 +26,33 @@ class SkaFileWatch(FileWatch):
         super(SkaFileWatch, self).__init__(task, maxage, filename)
 
 
+class H5Watch(JobWatch):
+    def __init__(self, task, maxage, filename=None,):
+        self.type = 'H5File'
+        full_filename = os.path.join(SKA, 'data', task, filename)
+        self.basename = os.path.basename(filename)
+        super(H5Watch, self).__init__(task, full_filename, maxage=maxage)
+
+    @property
+    def filelines(self):
+        return []
+
+    @property
+    def age(self):
+        if not hasattr(self, '_age'):
+            import tables
+            from Chandra.Time import DateTime
+            import time
+            h5 = tables.openFile(self.filename, mode='r')
+            table = h5.root.data
+            lasttime = table.col('time')[-1]
+            h5.close()
+            self.filetime = DateTime(lasttime).unix
+            self.filedate = time.ctime(self.filetime)
+            self._age = (time.time() - self.filetime) / 3600.
+        return self._age
+
+
 parser = argparse.ArgumentParser(description='Replan Central monitor')
 parser.add_argument('--date-now',
                     help='Processing date')
@@ -46,6 +73,9 @@ jobwatch.LOUD = args.loud
 jws = []
 jws.extend(
     [
+        H5Watch('arc', 1, 'ACE.h5'),
+        H5Watch('arc', 1, 'hrc_shield.h5'),
+        H5Watch('arc', 1, 'GOES_X.h5'),
         SkaFileWatch('arc', 1, 'ace.html'),
         SkaWebWatch('arc', 1, 'index.html'),
         SkaWebWatch('arc', 1, 'chandra.snapshot'),
