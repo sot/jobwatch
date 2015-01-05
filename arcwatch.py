@@ -4,6 +4,7 @@ import os
 import argparse
 import jobwatch
 import time
+from glob import glob
 from jobwatch import (FileWatch, JobWatch,
                       make_html_report, copy_errs,
                       set_report_attrs)
@@ -25,6 +26,14 @@ class SkaFileWatch(FileWatch):
         self.basename = basename
         super(SkaFileWatch, self).__init__(task, maxage, filename)
 
+class IfotFileWatch(FileWatch):
+    def __init__(self, task, maxage, ifotbasename):
+        ifot_root = os.path.join(SKA, 'data', 'arc', 'iFOT_events')
+        ifot_files = os.path.join(ifot_root, ifotbasename, "*")
+        filename = sorted(glob(ifot_files))[-1]
+        self.basename = ifotbasename
+        super(IfotFileWatch, self).__init__(task, maxage, filename)
+        self.type = 'iFOT query'
 
 class H5Watch(JobWatch):
     def __init__(self, task, maxage, filename=None,):
@@ -76,6 +85,18 @@ jws.extend(
         H5Watch('arc', 1, 'ACE.h5'),
         H5Watch('arc', 1, 'hrc_shield.h5'),
         H5Watch('arc', 1, 'GOES_X.h5'),
+        IfotFileWatch('arc', 1, 'comm'),
+        IfotFileWatch('arc', 1, 'eclipse'),
+        IfotFileWatch('arc', 1, 'grating'),
+        IfotFileWatch('arc', 1, 'grating'),
+        IfotFileWatch('arc', 1, 'load_segment'),
+        IfotFileWatch('arc', 1, 'maneuver'),
+        IfotFileWatch('arc', 1, 'momentum_mon'),
+        IfotFileWatch('arc', 1, 'or_er'),
+        IfotFileWatch('arc', 1, 'radmon'),
+        IfotFileWatch('arc', 1, 'safe'),
+        IfotFileWatch('arc', 1, 'sim'),
+        IfotFileWatch('arc', 1, 'sun_pos_mon'),
         SkaFileWatch('arc', 1, 'ace.html'),
         SkaWebWatch('arc', 1, 'index.html'),
         SkaWebWatch('arc', 1, 'chandra.snapshot'),
