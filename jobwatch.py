@@ -192,6 +192,10 @@ def set_report_attrs(jobwatches):
 
         jw.prev_index = ''
 
+def runtime(datenow):
+    now = DateTime(datenow)
+    return now.date
+
 
 def rundate(datenow):
     now = DateTime(datenow)
@@ -234,6 +238,7 @@ def make_html_report(jobwatches, rootdir, datenow=None,
     index_template = jinja2.Template(open(index_template, 'r').read())
     index_html = index_template.render(jobwatches=jobwatches,
                                        rundate=rundate(datenow),
+                                       runtime=runtime(datenow),
                                        curr_prefix=curr_prefix,
                                        next_prefix=next_prefix,
                                        prev_prefix=prev_prefix,
@@ -257,6 +262,7 @@ def make_html_report(jobwatches, rootdir, datenow=None,
         jw.next_http_prefix = root_prefix.format(nextdir)
     index_html = index_template.render(jobwatches=jobwatches,
                                        rundate=rundate(datenow),
+                                       runtime=runtime(datenow),
                                        curr_prefix=curr_prefix,
                                        next_prefix=next_prefix,
                                        prev_prefix=prev_prefix,
