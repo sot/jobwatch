@@ -191,6 +191,7 @@ def set_report_attrs(jobwatches):
 
         jw.prev_index = ''
 
+
 def runtime(datenow):
     now = DateTime(datenow)
     return now.date
@@ -219,7 +220,7 @@ def make_html_report(jobwatches, rootdir, datenow=None,
     curr_prefix = ''
     if just_status:
         prev_prefix = None
-        next_prefix= None
+        next_prefix = None
     else:
         prev_prefix = root_prefix.format(prevdir)
         next_prefix = root_prefix.format(nextdir)
@@ -280,7 +281,7 @@ def remove_old_reports(rootdir, date_now, max_age):
 
 
 def sendmail(recipients, html, datenow, subject=None):
-    if subject == None:
+    if subject is None:
         subject = 'Ska job status: {}'.format(rundate(datenow))
     me = os.environ['USER'] + '@head.cfa.harvard.edu'
     msg = MIMEText(html, 'html')

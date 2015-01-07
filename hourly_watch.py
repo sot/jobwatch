@@ -6,11 +6,12 @@ import jobwatch
 import time
 from glob import glob
 from jobwatch import (FileWatch, JobWatch,
-                      make_html_report, copy_errs,
+                      make_html_report,
                       set_report_attrs)
 
 SKA = os.environ['SKA']
-HOURS = 1/24.
+HOURS = 1 / 24.
+
 
 # Ska-specific watchers
 class SkaWebWatch(FileWatch):
@@ -26,6 +27,7 @@ class SkaFileWatch(FileWatch):
         self.basename = basename
         super(SkaFileWatch, self).__init__(task, maxage_hours * HOURS, filename)
 
+
 class IfotFileWatch(FileWatch):
     def __init__(self, task, maxage_hours, ifotbasename):
         ifot_root = os.path.join(SKA, 'data', 'arc', 'iFOT_events')
@@ -34,6 +36,7 @@ class IfotFileWatch(FileWatch):
         self.basename = ifotbasename
         super(IfotFileWatch, self).__init__(task, maxage_hours * HOURS, filename)
         self.type = 'iFOT query'
+
 
 class H5Watch(JobWatch):
     def __init__(self, task, maxage_hours, filename=None,):
@@ -121,4 +124,3 @@ if args.email and not report_ok:
         recipients, index_html, args.date_now,
         subject="Replan Central Status: {}".format(
             time.strftime("%F %T", time.localtime())))
-
