@@ -25,12 +25,11 @@ class JobWatch(object):
     def __init__(self, task, filename,
                  errors=(),
                  requires=(),
-                 maxage=24):
+                 maxage=1):
         self.task = task
         self._filename = filename
         self.errors = errors
         self.requires = requires
-        # maxage is in hours
         self.maxage = maxage
         self.filetime = None
         self.filedate = None
@@ -55,7 +54,7 @@ class JobWatch(object):
         if not hasattr(self, '_age'):
             self.filetime = os.path.getmtime(self.filename)
             self.filedate = time.ctime(self.filetime)
-            self._age = (time.time() - self.filetime) / 3600.
+            self._age = (time.time() - self.filetime) / 86400.0
         return self._age
 
     @property
@@ -99,7 +98,7 @@ class FileWatch(JobWatch):
     """Watch the date of a file but do not look into the file contents for
     errors.
     """
-    def __init__(self, task, maxage=24,
+    def __init__(self, task, maxage=1,
                  filename=None):
         self.type = 'File'
         super(FileWatch, self).__init__(task, filename, maxage=maxage,
@@ -111,7 +110,7 @@ class FileWatch(JobWatch):
 
 
 class DbWatch(JobWatch):
-    def __init__(self, task, maxage=24, table=None, timekey='tstart',
+    def __init__(self, task, maxage=1, table=None, timekey='tstart',
                  query='SELECT MAX({timekey}) AS maxtime FROM {table}',
                  dbi=None, server=None, user=None, database=None,
                  passwd=None):
@@ -145,7 +144,7 @@ class DbWatch(JobWatch):
             row = self.db.fetchone(self.query)
             self.filetime = DateTime(row['maxtime']).unix
             self.filedate = time.ctime(self.filetime)
-            self._age = (time.time() - self.filetime) / 3600.
+            self._age = (time.time() - self.filetime) / 86400.0
         return self._age
 
     @property

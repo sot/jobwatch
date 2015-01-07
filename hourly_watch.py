@@ -10,37 +10,37 @@ from jobwatch import (FileWatch, JobWatch,
                       set_report_attrs)
 
 SKA = os.environ['SKA']
-
+HOURS = 1/24.
 
 # Ska-specific watchers
 class SkaWebWatch(FileWatch):
-    def __init__(self, task, maxage, basename,
+    def __init__(self, task, maxage_hours, basename,
                  filename=SKA + '/www/ASPECT/{task}/{basename}'):
         self.basename = basename
-        super(SkaWebWatch, self).__init__(task, maxage, filename)
+        super(SkaWebWatch, self).__init__(task, maxage_hours * HOURS, filename)
 
 
 class SkaFileWatch(FileWatch):
-    def __init__(self, task, maxage, basename,
+    def __init__(self, task, maxage_hours, basename,
                  filename=SKA + '/data/{task}/{basename}'):
         self.basename = basename
-        super(SkaFileWatch, self).__init__(task, maxage, filename)
+        super(SkaFileWatch, self).__init__(task, maxage_hours * HOURS, filename)
 
 class IfotFileWatch(FileWatch):
-    def __init__(self, task, maxage, ifotbasename):
+    def __init__(self, task, maxage_hours, ifotbasename):
         ifot_root = os.path.join(SKA, 'data', 'arc', 'iFOT_events')
         ifot_files = os.path.join(ifot_root, ifotbasename, "*")
         filename = sorted(glob(ifot_files))[-1]
         self.basename = ifotbasename
-        super(IfotFileWatch, self).__init__(task, maxage, filename)
+        super(IfotFileWatch, self).__init__(task, maxage_hours * HOURS, filename)
         self.type = 'iFOT query'
 
 class H5Watch(JobWatch):
-    def __init__(self, task, maxage, filename=None,):
+    def __init__(self, task, maxage_hours, filename=None,):
         self.type = 'H5File'
         full_filename = os.path.join(SKA, 'data', task, filename)
         self.basename = os.path.basename(filename)
-        super(H5Watch, self).__init__(task, full_filename, maxage=maxage)
+        super(H5Watch, self).__init__(task, full_filename, maxage=maxage_hours * HOURS)
 
     @property
     def filelines(self):
@@ -58,7 +58,7 @@ class H5Watch(JobWatch):
             h5.close()
             self.filetime = DateTime(lasttime).unix
             self.filedate = time.ctime(self.filetime)
-            self._age = (time.time() - self.filetime) / 3600.
+            self._age = (time.time() - self.filetime) / 86400.0
         return self._age
 
 

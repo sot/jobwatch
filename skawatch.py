@@ -9,14 +9,14 @@ from jobwatch import (FileWatch, JobWatch, DbWatch,
 
 # Ska-specific watchers
 class SkaWebWatch(FileWatch):
-    def __init__(self, task, maxage_days, basename,
+    def __init__(self, task, maxage, basename,
                  filename='/proj/sot/ska/www/ASPECT/{task}/{basename}'):
         self.basename = basename
-        super(SkaWebWatch, self).__init__(task, maxage_days * 24, filename)
+        super(SkaWebWatch, self).__init__(task, maxage, filename)
 
 
 class SkaJobWatch(JobWatch):
-    def __init__(self, task, maxage_days=1, errors=jobwatch.ERRORS, requires=(),
+    def __init__(self, task, maxage=1, errors=jobwatch.ERRORS, requires=(),
                  logdir='logs', logtask=None,
                  filename='/proj/sot/ska/data/{task}/' \
                          '{logdir}/daily.0/{logtask}.log'):
@@ -26,13 +26,13 @@ class SkaJobWatch(JobWatch):
         self.logdir = logdir
         super(SkaJobWatch, self).__init__(task, filename, errors=errors,
                                           requires=requires,
-                                          maxage=maxage_days * 24)
+                                          maxage=maxage)
 
 
 class SkaDbWatch(DbWatch):
-    def __init__(self, task, maxage_days=1, table=None, timekey='tstart'):
+    def __init__(self, task, maxage=1, table=None, timekey='tstart'):
         super(SkaDbWatch, self).__init__(
-            task, maxage=maxage_days * 24, table=table, timekey=timekey,
+            task, maxage=maxage, table=table, timekey=timekey,
             query='SELECT MAX({timekey}) AS maxtime FROM {table}',
             dbi='sybase', server='sybase', user='aca_read', database='aca')
 
@@ -49,7 +49,7 @@ parser.add_argument('--email',
 parser.add_argument('--loud',
                     action='store_true',
                     help='Send email report')
-parser.add_argument('--max-age-days',
+parser.add_argument('--max-age',
                     type=int,
                     default=30,
                     help='Maximum age of watch reports in days')
@@ -154,4 +154,4 @@ recipients = ['aca@head.cfa.harvard.edu']
 if args.email:
     jobwatch.sendmail(recipients, index_html, args.date_now)
 
-jobwatch.remove_old_reports(args.rootdir, args.date_now, args.max_age_days)
+jobwatch.remove_old_reports(args.rootdir, args.date_now, args.max_age)
