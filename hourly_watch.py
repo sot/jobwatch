@@ -113,6 +113,7 @@ jws.extend(
 set_report_attrs(jws)
 # Are all the reports OK?
 report_ok = all([j.ok for j in jws])
+errors = ["{:02d}".format(jn) for jn, job in enumerate(jws) if not job.ok]
 index_html = make_html_report(jws, args.rootdir,
                               index_template='hourly_template.html',
                               just_status=True
@@ -122,5 +123,7 @@ recipients = ['aca@head.cfa.harvard.edu']
 if args.email and not report_ok:
     jobwatch.sendmail(
         recipients, index_html, args.date_now,
-        subject="Replan Central Status: {}".format(
-            time.strftime("%F %T", time.localtime())))
+        subject="{}: Week {}, Errs on test: {}".format(
+            time.strftime("%Y", time.localtime()),
+            time.strftime("%W", time.localtime()),
+            errors))
