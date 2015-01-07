@@ -11,6 +11,7 @@ from jobwatch import (FileWatch, JobWatch,
 
 SKA = os.environ['SKA']
 HOURS = 1 / 24.
+FILEDIR = os.path.dirname(__file__)
 
 
 # Ska-specific watchers
@@ -115,7 +116,8 @@ set_report_attrs(jws)
 report_ok = all([j.ok for j in jws])
 errors = ["{:02d}".format(jn) for jn, job in enumerate(jws) if not job.ok]
 index_html = make_html_report(jws, args.rootdir,
-                              index_template='hourly_template.html',
+                              index_template=os.path.join(FILEDIR,
+                                                          'hourly_template.html'),
                               just_status=True
                               )
 recipients = ['aca@head.cfa.harvard.edu']
