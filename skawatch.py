@@ -84,9 +84,10 @@ star_stat = '/proj/sot/ska/data/star_stat_db/Logs/daily.0/{task}.log'
 
 jws = []
 jws.extend([
-    SkaJobWatch('aca_bgd_mon', 400, errors=perl_errs,
-                requires=('Copying plots and log file '
-                          'to /proj/sot/ska/www/ASPECT',)),
+    # Commented out 2015-Jan-25.  Hopefully this will be resurrected.
+    # SkaJobWatch('aca_bgd_mon', 400, errors=perl_errs,
+    #             requires=('Copying plots and log file '
+    #                      'to /proj/sot/ska/www/ASPECT',)),
     SkaJobWatch('arc', 2, errors=arc_errs, logdir='Logs'),
     SkaJobWatch('astromon', 8, errors=astromon_errs),
     SkaJobWatch('dsn_summary', 2, errors=perl_errs),
@@ -106,7 +107,6 @@ jws.extend([
     SkaJobWatch('star_database', 2, filename=jean_db),
     SkaJobWatch('starcheck_database', 2, filename=jean_db),
     SkaJobWatch('vv_database', 2, filename=jean_db),
-    SkaJobWatch('nmass', 8, errors=nmass_errs, logtask='trend_nmass'),
     SkaJobWatch('validate_states', 2, errors=trace_plus_errs),
     SkaJobWatch('scs107', 2, logdir='Logs', logtask='scs107_check'),
     SkaJobWatch('telem_archive', 2, errors=telem_archive_errs),
