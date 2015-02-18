@@ -115,6 +115,9 @@ set_report_attrs(jws)
 # Are all the reports OK?
 report_ok = all([j.ok for j in jws])
 errors = ["{:02d}".format(jn) for jn, job in enumerate(jws) if not job.ok]
+# Set the age strings manually to display in hours
+for jw in jws:
+    jw.age_str = '{:.2f}'.format(jw.age / HOURS) if jw.exists else 'None'
 index_html = make_html_report(jws, args.rootdir,
                               index_template=os.path.join(FILEDIR,
                                                           'hourly_template.html'),

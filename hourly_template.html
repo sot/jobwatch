@@ -28,7 +28,8 @@
                 style="color:red" {{row['overlib']}}>NOT OK</a>
             {% endif %}
         </td>
-        <td>{{"%.2f"|format(row['age'] * 24)}}</td><td>{{"%.1f"|format(row['maxage'] * 24)}}</td>
+        <td>{{row['age_str']}}</td>
+        <td>{{"%.1f"|format(row['maxage'] * 24)}}</td>
         <td>{{row['filedate']}}</td>
       </tr>
       {% endfor %}
