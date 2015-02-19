@@ -25,7 +25,8 @@ class SkaJobWatch(JobWatch):
         self.logtask = logtask or task
         self.logdir = logdir
         super(SkaJobWatch, self).__init__(task, filename, errors=errors,
-                                          requires=requires, maxage=maxage)
+                                          requires=requires,
+                                          maxage=maxage)
 
 
 class SkaDbWatch(DbWatch):
@@ -51,7 +52,7 @@ parser.add_argument('--loud',
 parser.add_argument('--max-age',
                     type=int,
                     default=30,
-                    help='Maximum age of watch reports')
+                    help='Maximum age of watch reports in days')
 args = parser.parse_args()
 
 jobwatch.LOUD = args.loud

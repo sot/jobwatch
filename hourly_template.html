@@ -1,0 +1,41 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <script type="text/javascript" src="../overlib.js"></script>
+    <link href="/mta/ASPECT/aspect.css" rel="stylesheet" type="text/css" media="all" />
+    <style type="text/css"></style>
+    <title>Hourly Job Status: {{runtime}}</title>
+  </head>
+
+  <body>  
+    <div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>
+
+    <h1>Hourly Job Status: {{runtime}}</h1>
+
+
+    <table border=1>
+      <tr><th>File</th> <th>Status</th> <th>Age (Hours)</th><th>MaxAge</th> <th>Last Date</th> </tr>
+      {% for row in jobwatches %}
+      {% if row['span_cols_text'] %}
+        <tr> <th colspan=5> {{row['type']}} </th> </tr>
+      {% endif %}
+      <tr>
+        <td>{{row['basename']}}</td>
+        <td>{% if row['ok'] %}
+              OK
+            {% else %}
+              <a href="{{row['http_prefix']}}{{row['log_html_name']}}" 
+                style="color:red" {{row['overlib']}}>NOT OK</a>
+            {% endif %}
+        </td>
+        <td>{{row['age_str']}}</td>
+        <td>{{"%.1f"|format(row['maxage'] * 24)}}</td>
+        <td>{{row['filedate']}}</td>
+      </tr>
+      {% endfor %}
+    </table>
+    <hr>
+  <!--#include virtual="/mta/ASPECT/footer.html"--> 
+  <!--footer end-->
+  </body>
+</html>

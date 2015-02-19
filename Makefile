@@ -4,8 +4,9 @@ VERSION = 0.1
 
 # Uncomment the correct choice indicating either SKA or TST flight environment
 FLIGHT_ENV = SKA
-SHARE = jobwatch.py skawatch.py log_template.html index_template.html
-DATA = task_schedule.cfg
+SHARE = jobwatch.py skawatch.py hourly_watch.py \
+        log_template.html index_template.html hourly_template.html
+DATA = task_schedule.cfg hourly_task_schedule.cfg
 WWW = overlib.js
 
 include /proj/sot/ska/include/Makefile.FLIGHT
