@@ -101,13 +101,12 @@ jws.extend(
         IfotFileWatch('arc', 1, 'safe'),
         IfotFileWatch('arc', 1, 'sim'),
         IfotFileWatch('arc', 1, 'sun_pos_mon'),
-        SkaFileWatch('arc', 1, 'ace.html'),
         SkaWebWatch('arc', 1, 'index.html'),
         SkaWebWatch('arc', 1, 'chandra.snapshot'),
         SkaWebWatch('arc', 1, 'hrc_shield.png'),
         SkaWebWatch('arc', 1, 'GOES_xray.gif'),
         SkaWebWatch('arc', 1, 'GOES_5min.gif'),
-        SkaWebWatch('arc', 8, 'solar_wind.gif'),
+        SkaWebWatch('arc', 1, 'solar_wind.gif'),
         SkaWebWatch('arc', 1, 'solar_flare_monitor.png'),
         SkaWebWatch('arc', 1, 'ACE_5min.gif')])
 
