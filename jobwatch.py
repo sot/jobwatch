@@ -192,6 +192,13 @@ def set_report_attrs(jobwatches):
         jw.prev_index = ''
 
 
+def runtime_long(datenow):
+    now = DateTime(datenow)
+    return '{} {}Z ({})'.format(
+        now.date[:8], now.date[9:14],
+        time.strftime('%b %d, %H:%M %Z', time.localtime(now.unix)))
+
+
 def runtime(datenow):
     now = DateTime(datenow)
     return now.date
@@ -239,6 +246,7 @@ def make_html_report(jobwatches, rootdir, datenow=None,
     index_html = index_template.render(jobwatches=jobwatches,
                                        rundate=rundate(datenow),
                                        runtime=runtime(datenow),
+                                       runtime_long=runtime_long(datenow),
                                        curr_prefix=curr_prefix,
                                        next_prefix=next_prefix,
                                        prev_prefix=prev_prefix,
@@ -263,6 +271,7 @@ def make_html_report(jobwatches, rootdir, datenow=None,
     index_html = index_template.render(jobwatches=jobwatches,
                                        rundate=rundate(datenow),
                                        runtime=runtime(datenow),
+                                       runtime_long=runtime_long(datenow),
                                        curr_prefix=curr_prefix,
                                        next_prefix=next_prefix,
                                        prev_prefix=prev_prefix,
