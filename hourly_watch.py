@@ -127,7 +127,7 @@ recipients = ['aca@head.cfa.harvard.edu']
 if args.email and not report_ok:
     jobwatch.sendmail(
         recipients, index_html, args.date_now,
-        subject="{}: Week {}, Errs on test: {}".format(
+        subject="{} Week {} errors: {}".format(
             time.strftime("%Y", time.localtime()),
             time.strftime("%W", time.localtime()),
-            errors))
+            ", ".join(errors)))
