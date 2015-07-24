@@ -15,6 +15,50 @@ FILEDIR = os.path.dirname(__file__)
 
 
 # Ska-specific watchers
+class SkaURLWatch(JobWatch):
+    def __init__(self, task, maxage_hours, url=None,):
+        self.type = 'URL'
+        self.basename = url
+        super(SkaURLWatch, self).__init__(task, url, maxage=maxage_hours * HOURS)
+
+    @property
+    def headers(self):
+        if not hasattr(self, '_headers'):
+            try:
+                import urllib2
+                response = urllib2.urlopen(self.basename)
+                self._headers = response.headers
+            except:
+                self._exists = False
+                self._headers = None
+        return self._headers
+
+    @property
+    def exists(self):
+        if not hasattr(self, '_exists'):
+            self._exists = self.headers is not None
+        return self._exists
+
+    @property
+    def age(self):
+        if not hasattr(self, '_age'):
+            if self.headers is not None:
+                import time
+                from Chandra.Time import DateTime
+                if 'Last-Modified' in self.headers:
+                    self.filetime = time.mktime(self.headers.getdate('Last-Modified'))
+                else:
+                    self.filetime = time.mktime(self.headers.getdate('Date'))
+                self._age = (time.mktime(time.gmtime()) - self.filetime) / 86400.0
+            else:
+                self._age = None
+        return self._age
+
+    @property
+    def filelines(self):
+        return []
+
+
 class SkaWebWatch(FileWatch):
     def __init__(self, task, maxage_hours, basename,
                  filename=SKA + '/www/ASPECT/{task}/{basename}'):
