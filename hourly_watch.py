@@ -130,6 +130,7 @@ jobwatch.LOUD = args.loud
 jws = []
 jws.extend(
     [
+        SkaURLWatch('kadi', 1, 'http://kadi.cfa.harvard.edu'),
         H5Watch('arc', 1, 'ACE.h5'),
         H5Watch('arc', 1, 'hrc_shield.h5'),
         H5Watch('arc', 1, 'GOES_X.h5'),
