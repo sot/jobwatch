@@ -4,7 +4,12 @@ import os
 import argparse
 import jobwatch
 import time
+import urllib2
+import tables
 from glob import glob
+
+from Chandra.Time import DateTime
+
 from jobwatch import (FileWatch, JobWatch,
                       make_html_report,
                       set_report_attrs)
@@ -25,7 +30,7 @@ class SkaURLWatch(JobWatch):
     def headers(self):
         if not hasattr(self, '_headers'):
             try:
-                import urllib2
+
                 response = urllib2.urlopen(self.basename)
                 self._headers = response.headers
             except:
@@ -43,8 +48,6 @@ class SkaURLWatch(JobWatch):
     def age(self):
         if not hasattr(self, '_age'):
             if self.headers is not None:
-                import time
-                from Chandra.Time import DateTime
                 if 'Last-Modified' in self.headers:
                     self.filetime = time.mktime(self.headers.getdate('Last-Modified'))
                 else:
@@ -97,9 +100,6 @@ class H5Watch(JobWatch):
     @property
     def age(self):
         if not hasattr(self, '_age'):
-            import tables
-            from Chandra.Time import DateTime
-            import time
             h5 = tables.openFile(self.filename, mode='r')
             table = h5.root.data
             lasttime = table.col('time')[-1]
