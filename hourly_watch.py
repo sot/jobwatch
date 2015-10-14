@@ -4,7 +4,7 @@ import os
 import argparse
 import jobwatch
 import time
-import urllib2
+import requests
 import tables
 from glob import glob
 
@@ -29,13 +29,15 @@ class SkaURLWatch(JobWatch):
     @property
     def headers(self):
         if not hasattr(self, '_headers'):
-            try:
 
-                response = urllib2.urlopen(self.basename)
-                self._headers = response.headers
+            try:
+                response = requests.get(self.basename)
             except:
                 self._exists = False
                 self._headers = None
+            else:
+                self._exists = response.ok
+                self._headers = response.headers
         return self._headers
 
     @property
@@ -48,10 +50,17 @@ class SkaURLWatch(JobWatch):
     def age(self):
         if not hasattr(self, '_age'):
             if self.headers is not None:
-                if 'Last-Modified' in self.headers:
-                    self.filetime = time.mktime(self.headers.getdate('Last-Modified'))
+                if 'last-modified' in self.headers:
+                    time_header = 'last-modified'
                 else:
-                    self.filetime = time.mktime(self.headers.getdate('Date'))
+                    time_header = 'date'
+                parsed_time = time.strptime(self.headers[time_header],
+                                            "%a, %d %b %Y %H:%M:%S %Z")
+                # go through time's hoops to work with this in the right timezone
+                os.environ['TZ'] = time.strftime("%Z", parsed_time)
+                time.tzset()
+                self.filetime = time.mktime(parsed_time)
+                del os.environ['TZ']
                 self._age = (time.mktime(time.gmtime()) - self.filetime) / 86400.0
             else:
                 self._age = None
