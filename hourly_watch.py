@@ -4,7 +4,12 @@ import os
 import argparse
 import jobwatch
 import time
+import requests
+import tables
 from glob import glob
+
+from Chandra.Time import DateTime
+
 from jobwatch import (FileWatch, JobWatch,
                       make_html_report,
                       set_report_attrs)
@@ -15,6 +20,57 @@ FILEDIR = os.path.dirname(__file__)
 
 
 # Ska-specific watchers
+class SkaURLWatch(JobWatch):
+    def __init__(self, task, maxage_hours, url=None,):
+        self.type = 'URL'
+        self.basename = url
+        super(SkaURLWatch, self).__init__(task, url, maxage=maxage_hours * HOURS)
+
+    @property
+    def headers(self):
+        if not hasattr(self, '_headers'):
+
+            try:
+                response = requests.get(self.basename)
+            except:
+                self._exists = False
+                self._headers = None
+            else:
+                self._exists = response.ok
+                self._headers = response.headers
+        return self._headers
+
+    @property
+    def exists(self):
+        if not hasattr(self, '_exists'):
+            self._exists = self.headers is not None
+        return self._exists
+
+    @property
+    def age(self):
+        if not hasattr(self, '_age'):
+            if self.headers is not None:
+                if 'last-modified' in self.headers:
+                    time_header = 'last-modified'
+                else:
+                    time_header = 'date'
+                parsed_time = time.strptime(self.headers[time_header],
+                                            "%a, %d %b %Y %H:%M:%S %Z")
+                # go through time's hoops to work with this in the right timezone
+                os.environ['TZ'] = time.strftime("%Z", parsed_time)
+                time.tzset()
+                self.filetime = time.mktime(parsed_time)
+                del os.environ['TZ']
+                self._age = (time.mktime(time.gmtime()) - self.filetime) / 86400.0
+            else:
+                self._age = None
+        return self._age
+
+    @property
+    def filelines(self):
+        return []
+
+
 class SkaWebWatch(FileWatch):
     def __init__(self, task, maxage_hours, basename,
                  filename=SKA + '/www/ASPECT/{task}/{basename}'):
@@ -53,9 +109,6 @@ class H5Watch(JobWatch):
     @property
     def age(self):
         if not hasattr(self, '_age'):
-            import tables
-            from Chandra.Time import DateTime
-            import time
             h5 = tables.openFile(self.filename, mode='r')
             table = h5.root.data
             lasttime = table.col('time')[-1]
@@ -86,6 +139,15 @@ jobwatch.LOUD = args.loud
 jws = []
 jws.extend(
     [
+        SkaURLWatch('kadi', 1, 'http://kadi.cfa.harvard.edu'),
+        SkaURLWatch('arc', 1, 'http://cxc.harvard.edu/mta/ASPECT/arc/index.html'),
+        SkaURLWatch('arc', 1, 'http://cxc.harvard.edu/mta/ASPECT/arc/timeline.png'),
+        SkaURLWatch('arc', 1, 'http://cxc.harvard.edu/mta/ASPECT/arc/ACE_5min.gif'),
+        SkaURLWatch('arc', 1, 'http://cxc.harvard.edu/mta/ASPECT/arc/GOES_5min.gif'),
+        SkaURLWatch('arc', 1, 'http://cxc.harvard.edu/mta/ASPECT/arc/GOES_xray.gif'),
+        SkaURLWatch('arc', 1, 'http://cxc.harvard.edu/mta/ASPECT/arc/solar_wind.gif'),
+        SkaURLWatch('arc', 1, 'http://cxc.harvard.edu/mta/ASPECT/arc/solar_flare_monitor.png'),
+        SkaURLWatch('arc', 1, 'http://cxc.harvard.edu/mta/ASPECT/arc/hrc_shield.png'),
         H5Watch('arc', 1, 'ACE.h5'),
         H5Watch('arc', 1, 'hrc_shield.h5'),
         H5Watch('arc', 1, 'GOES_X.h5'),
