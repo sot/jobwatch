@@ -89,6 +89,7 @@ jws.extend([
     # SkaJobWatch('aca_bgd_mon', 400, errors=perl_errs,
     #             requires=('Copying plots and log file '
     #                      'to /proj/sot/ska/www/ASPECT',)),
+    SkaJobWatch('aca_lts_eval', 2, errors=py_errs),
     SkaJobWatch('arc', 2, errors=arc_errs, logdir='Logs'),
     SkaJobWatch('astromon', 8, errors=astromon_errs),
     SkaJobWatch('dsn_summary', 2, errors=perl_errs),
@@ -116,6 +117,7 @@ jws.extend([
     ])
 
 jws.extend([
+    SkaWebWatch('aca_lts_eval', 12, 'index.html'),
     SkaWebWatch('acq_stat_reports', 10, 'index.html'),
     SkaWebWatch('arc', 1, 'index.html'),
     SkaWebWatch('arc', 1, 'chandra.snapshot'),
