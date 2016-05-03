@@ -80,6 +80,8 @@ engarchive_errs = copy_errs(py_errs, ['fail'],
                              ['(?<!5OHW)FAIL(?!MODE)'])
 perigee_errs = copy_errs(py_errs, ['warn'],
                          ['warning(?!: Limit Exceeded. dac of)'])
+att_mon_errs = copy_errs(py_errs, ['error'],
+                         ['(?<!\_)error'])
 jean_db = '/proj/sot/ska/data/database/Logs/daily.0/{task}.log'
 star_stat = '/proj/sot/ska/data/star_stat_db/Logs/daily.0/{task}.log'
 
@@ -93,6 +95,7 @@ jws.extend([
     SkaJobWatch('aimpoint_mon', 2, errors=py_errs),
     SkaJobWatch('arc', 2, errors=arc_errs, logdir='Logs'),
     SkaJobWatch('astromon', 8, errors=astromon_errs),
+    SkaJobWatch('attitude_error_mon', 2, errors=att_mon_errs),
     SkaJobWatch('dsn_summary', 2, errors=perl_errs),
     SkaJobWatch('eng_archive', 1, errors=engarchive_errs,
                 requires=('Checking dp_pcad32 content',)),
@@ -123,6 +126,8 @@ jws.extend([
     SkaWebWatch('aimpoint_mon', 1, 'index.html'),
     SkaWebWatch('aimpoint_mon', 1, 'info.json'),
     SkaWebWatch('aimpoint_mon', 20, 'characteristics/index'),
+    SkaWebWatch('attitude_error_mon', 2, 'one_shot_vs_angle.png'),
+    FileWatch('attitude_error_mon', 2, '/proj/sot/ska/data/attitude_error_mon/msd_data.dat'),
     SkaWebWatch('arc', 1, 'index.html'),
     SkaWebWatch('arc', 1, 'chandra.snapshot'),
     SkaWebWatch('arc', 1, 'hrc_shield.png'),
