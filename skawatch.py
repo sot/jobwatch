@@ -118,6 +118,7 @@ jws.extend([
     SkaJobWatch('telem_archive', 2, errors=telem_archive_errs),
     SkaJobWatch('perigee_health_plots', 2, logdir='Logs',
                 errors=perigee_errs),
+    SkaJobWatch('vv_trend', 10, errors=py_errs),
     ])
 
 jws.extend([
@@ -145,6 +146,7 @@ jws.extend([
     SkaWebWatch('kadi', 1, '', filename='/proj/sot/ska/data/kadi/events.db3'),
     SkaWebWatch('obc_rate_noise', 50, 'trending/pitch_hist_recent.png'),
     SkaWebWatch('perigee_health_plots', 5, 'index.html'),
+    SkaWebWatch('vv_rms', 10, 'hist2d_fig.png'),
     ])
 
 jws.extend([
