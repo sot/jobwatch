@@ -140,6 +140,8 @@ jws.extend([
     SkaWebWatch('celmon', 30, 'offsets-ACIS-S-hist.gif'),
     FileWatch('dsn_summary', 1,
               '/proj/sot/ska/data/dsn_summary/dsn_summary.dat'),
+    FileWatch('dsn_summary', 1,
+              '/data/mta4/proj/rac/ops/ephem/dsn_summary.dat'),
     SkaWebWatch('gui_stat_reports', 10, 'index.html'),
     SkaWebWatch('fid_drift', 2, 'drift_acis_s.png'),
     SkaWebWatch('eng_archive', 1, '', filename='/proj/sot/ska/data/eng_archive/data/dp_pcad32/TIME.h5'),
