@@ -97,7 +97,7 @@ jws.extend([
     SkaJobWatch('astromon', 8, errors=astromon_errs),
     SkaJobWatch('attitude_error_mon', 2, errors=att_mon_errs),
     SkaJobWatch('dsn_summary', 2, errors=perl_errs,
-                logtask='dsn_summary_master.log'),
+                logtask='dsn_summary_master'),
     SkaJobWatch('eng_archive', 1, errors=engarchive_errs,
                 requires=('Checking dp_pcad32 content',)),
     SkaJobWatch('fid_drift_mon', 2, errors=py_errs.union(perl_errs)),
