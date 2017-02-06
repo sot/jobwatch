@@ -37,6 +37,15 @@ class SkaDbWatch(DbWatch):
             dbi='sybase', server='sybase', user='aca_read', database='aca')
 
 
+class SkaSqliteDbWatch(DbWatch):
+    def __init__(self, task, maxage=1, dbfile=None, table=None, timekey='tstart'):
+        super(SkaSqliteDbWatch, self).__init__(
+            task, maxage=maxage, table=table, timekey=timekey,
+            query='SELECT MAX({timekey}) AS maxtime FROM {table}',
+            dbi='sqlite', server=dbfile)
+
+
+
 parser = argparse.ArgumentParser(description='Ska processing monitor')
 parser.add_argument('--date-now',
                     help='Processing date')
@@ -161,6 +170,18 @@ jws.extend([
     SkaDbWatch('starcheck_obs', 4, timekey='mp_starcat_time'),
     SkaDbWatch('trak_stats_data', 4, timekey='kalman_tstart'),
     ])
+
+jws.extend([
+    SkaSqliteDbWatch('cmds', -1, timekey='date',
+                     dbfile='/proj/sot/ska/data/cmd_states/cmd_states.db3'),
+    SkaSqliteDbWatch('cmd_states', -1, timekey='datestart',
+                     dbfile='/proj/sot/ska/data/cmd_states/cmd_states.db3'),
+    SkaSqliteDbWatch('load_segments', -1, timekey='datestop',
+                     dbfile='/proj/sot/ska/data/cmd_states/cmd_states.db3'),
+    SkaSqliteDbWatch('timeline_loads', -1, timekey='datestop',
+                     dbfile='/proj/sot/ska/data/cmd_states/cmd_states.db3'),
+    ])
+
 
 set_report_attrs(jws)
 index_html = make_html_report(jws, args.rootdir, args.date_now)
