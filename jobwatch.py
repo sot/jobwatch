@@ -114,12 +114,12 @@ class DbWatch(JobWatch):
                  query='SELECT MAX({timekey}) AS maxtime FROM {table}',
                  dbi=None, server=None, user=None, database=None,
                  passwd=None):
-        self.type = 'DB'
+        self.dbi = dbi
+        self.type = 'DB {}'.format(dbi)
         self.task = task
         self._query = query
         self.table = table or task
         self.timekey = timekey
-        self.dbi = dbi
         self.server = server
         self.user = user
         self.database = database
