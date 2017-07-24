@@ -182,7 +182,8 @@ index_html = make_html_report(jws, args.rootdir,
                                                           'hourly_template.html'),
                               just_status=True
                               )
-recipients = ['aca@head.cfa.harvard.edu']
+recipients = ['aca@head.cfa.harvard.edu',
+              'msobolewska@cfa.harvard.edu', 'tisobe@cfa.harvard.edu', 'swolk@cfa.harvard.edu']
 
 if args.email and not report_ok:
     jobwatch.sendmail(
