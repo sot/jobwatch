@@ -85,6 +85,12 @@ class SkaFileWatch(FileWatch):
         super(SkaFileWatch, self).__init__(task, maxage_hours * HOURS, filename)
 
 
+class NonSkaFileWatch(FileWatch):
+    def __init__(self, task, maxage_hours, filename):
+        self.basename = filename
+        super(NonSkaFileWatch, self).__init__(task, maxage_hours * HOURS, filename)
+
+
 class IfotFileWatch(FileWatch):
     def __init__(self, task, maxage_hours, ifotbasename):
         ifot_root = os.path.join(SKA, 'data', 'arc', 'iFOT_events')
@@ -162,6 +168,7 @@ jws.extend(
         IfotFileWatch('arc', 1, 'safe'),
         IfotFileWatch('arc', 1, 'sim'),
         IfotFileWatch('arc', 1, 'sun_pos_mon'),
+        NonSkaFileWatch('mta snapshot', 1, '/data/mta4/www/Snapshot/chandra.snapshot'),
         SkaWebWatch('arc', 1, 'index.html'),
         SkaWebWatch('arc', 1, 'chandra.snapshot'),
         SkaWebWatch('arc', 1, 'hrc_shield.png'),
