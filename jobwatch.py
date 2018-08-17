@@ -25,10 +25,12 @@ class JobWatch(object):
     def __init__(self, task, filename,
                  errors=(),
                  requires=(),
-                 maxage=1):
+                 maxage=1,
+                 exclude_errors=()):
         self.task = task
         self._filename = filename
         self.errors = errors
+        self.exclude_errors = exclude_errors
         self.requires = requires
         self.maxage = maxage
         self.filetime = None
@@ -78,7 +80,9 @@ class JobWatch(object):
         found_errors = []
         for i, line in enumerate(self.filelines):
             for error in self.errors:
-                if re.search(error, line, re.IGNORECASE):
+                if (re.search(error, line, re.IGNORECASE) and
+                    not any(re.search(exclude_error, line, re.IGNORECASE)
+                            for exclude_error in self.exclude_errors)):
                     if LOUD:
                         print 'MATCH: {}\n    {}'.format(
                             error, line),

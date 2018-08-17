@@ -18,14 +18,16 @@ class SkaWebWatch(FileWatch):
 class SkaJobWatch(JobWatch):
     def __init__(self, task, maxage=1, errors=jobwatch.ERRORS, requires=(),
                  logdir='logs', logtask=None,
-                 filename='/proj/sot/ska/data/{task}/' \
-                         '{logdir}/daily.0/{logtask}.log'):
+                 exclude_errors=(),
+                 filename=('/proj/sot/ska/data/{task}/'
+                           '{logdir}/daily.0/{logtask}.log')):
         self.type = 'Log'
         self.task = task
         self.logtask = logtask or task
         self.logdir = logdir
         super(SkaJobWatch, self).__init__(task, filename, errors=errors,
                                           requires=requires,
+                                          exclude_errors=exclude_errors,
                                           maxage=maxage)
 
 
@@ -45,7 +47,6 @@ class SkaSqliteDbWatch(DbWatch):
             dbi='sqlite', server=dbfile)
 
 
-
 parser = argparse.ArgumentParser(description='Ska processing monitor')
 parser.add_argument('--date-now',
                     help='Processing date')
@@ -57,7 +58,7 @@ parser.add_argument('--email',
                     help='Send email report')
 parser.add_argument('--loud',
                     action='store_true',
-                    help='Send email report')
+                    help='Run loudly')
 parser.add_argument('--max-age',
                     type=int,
                     default=30,
@@ -71,7 +72,7 @@ py_errs = set(('error', 'warn', 'fail', 'fatal', 'exception', 'traceback'))
 perl_errs = set(('uninitialized value',
                  '(?<!Program caused arithmetic )error',
                  'warn', 'fatal', 'fail', 'undefined value'))
-arc_errs = copy_errs(perl_errs, ['warn'], ['warning(?!:\s+\d+\s)'])
+arc_exclude_errors = ['file contains 0 lines that start with AVERAGE']
 nmass_errs = copy_errs(py_errs, ('warn', 'fail'),
                        ('warn(?!ing: imaging routines will not be available)',
                         'fail(?!ed to import sherpa)'))
@@ -102,7 +103,7 @@ jws.extend([
     #                      'to /proj/sot/ska/www/ASPECT',)),
     SkaJobWatch('aca_lts_eval', 2, errors=py_errs),
     SkaJobWatch('aimpoint_mon', 2, errors=py_errs),
-    SkaJobWatch('arc', 2, errors=arc_errs, logdir='Logs'),
+    SkaJobWatch('arc', 2, exclude_errors=arc_exclude_errors, logdir='Logs'),
     SkaJobWatch('astromon', 8, errors=astromon_errs),
     SkaJobWatch('attitude_error_mon', 2, errors=att_mon_errs),
     SkaJobWatch('dsn_summary', 2, errors=perl_errs,
@@ -110,8 +111,11 @@ jws.extend([
     SkaJobWatch('eng_archive', 1, errors=engarchive_errs,
                 requires=('Checking dp_pcad32 content',)),
     SkaJobWatch('fid_drift_mon', 2, errors=py_errs.union(perl_errs)),
-    SkaJobWatch('kadi', 1, errors=py_errs, requires=('Ska.ftp: close',)),  # Made it to the end
-    SkaJobWatch('star_stats', 2, filename=star_stat),
+    SkaJobWatch('kadi', 1, logtask='kadi_events', errors=py_errs,
+                requires=('Ska.ftp: close',)),  # Made it to the end
+    SkaJobWatch('kadi', 1, logtask='kadi_cmds', errors=py_errs),
+    SkaJobWatch('star_stats', 2, filename=star_stat,
+                exclude_errors=['Cannot determine guide transition time']),
     SkaJobWatch('timelines', 2, logtask='timelines_cmd_states', logdir='Logs'),
     SkaJobWatch('mica', 2, errors=trace_plus_errs),
     SkaJobWatch('taco', 8),
