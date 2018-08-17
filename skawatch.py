@@ -72,7 +72,8 @@ py_errs = set(('error', 'warn', 'fail', 'fatal', 'exception', 'traceback'))
 perl_errs = set(('uninitialized value',
                  '(?<!Program caused arithmetic )error',
                  'warn', 'fatal', 'fail', 'undefined value'))
-arc_exclude_errors = ['file contains 0 lines that start with AVERAGE']
+arc_exclude_errors = ['warning:\s+\d+\s',
+                      'file contains 0 lines that start with AVERAGE']
 nmass_errs = copy_errs(py_errs, ('warn', 'fail'),
                        ('warn(?!ing: imaging routines will not be available)',
                         'fail(?!ed to import sherpa)'))
