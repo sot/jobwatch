@@ -150,7 +150,7 @@ jws.extend(
         SkaURLWatch('arc', 1, 'http://cxc.harvard.edu/mta/ASPECT/arc/timeline.png'),
         SkaURLWatch('arc', 1, 'http://cxc.harvard.edu/mta/ASPECT/arc/ACE_5min.gif'),
         SkaURLWatch('arc', 1, 'http://cxc.harvard.edu/mta/ASPECT/arc/GOES_5min.gif'),
-        SkaURLWatch('arc', 1, 'http://cxc.harvard.edu/mta/ASPECT/arc/GOES_xray.gif'),
+        #SkaURLWatch('arc', 1, 'http://cxc.harvard.edu/mta/ASPECT/arc/GOES_xray.gif'),
         SkaURLWatch('arc', 1, 'http://cxc.harvard.edu/mta/ASPECT/arc/solar_wind.gif'),
         SkaURLWatch('arc', 1, 'http://cxc.harvard.edu/mta/ASPECT/arc/hrc_shield.png'),
         H5Watch('arc', 1, 'ACE.h5'),
@@ -172,7 +172,7 @@ jws.extend(
         SkaWebWatch('arc', 1, 'index.html'),
         SkaWebWatch('arc', 1, 'chandra.snapshot'),
         SkaWebWatch('arc', 1, 'hrc_shield.png'),
-        SkaWebWatch('arc', 1, 'GOES_xray.gif'),
+        #SkaWebWatch('arc', 1, 'GOES_xray.gif'),
         SkaWebWatch('arc', 1, 'GOES_5min.gif'),
         SkaWebWatch('arc', 1, 'solar_wind.gif'),
         SkaWebWatch('arc', 1, 'ACE_5min.gif')])
