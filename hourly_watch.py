@@ -101,6 +101,16 @@ class IfotFileWatch(FileWatch):
         self.type = 'iFOT query'
 
 
+class Ifot3FileWatch(FileWatch):
+    def __init__(self, task, maxage_hours, ifotbasename):
+        ifot_root = os.path.join(SKA, 'data', 'arc3', 'iFOT_events')
+        ifot_files = os.path.join(ifot_root, ifotbasename, "*")
+        filename = sorted(glob(ifot_files))[-1]
+        self.basename = ifotbasename
+        super(Ifot3FileWatch, self).__init__(task, maxage_hours * HOURS, filename)
+        self.type = 'iFOT query'
+
+
 class H5Watch(JobWatch):
     def __init__(self, task, maxage_hours, filename=None,):
         self.type = 'H5File'
@@ -175,7 +185,42 @@ jws.extend(
         #SkaWebWatch('arc', 1, 'GOES_xray.gif'),
         SkaWebWatch('arc', 1, 'GOES_5min.gif'),
         SkaWebWatch('arc', 1, 'solar_wind.gif'),
-        SkaWebWatch('arc', 1, 'ACE_5min.gif')])
+        SkaWebWatch('arc', 1, 'ACE_5min.gif'),
+
+        SkaURLWatch('arc3', 1, 'http://cxc.harvard.edu/mta/ASPECT/arc3/index.html'),
+        SkaURLWatch('arc3', 1, 'http://cxc.harvard.edu/mta/ASPECT/arc3/timeline.png'),
+        SkaURLWatch('arc3', 1, 'http://cxc.harvard.edu/mta/ASPECT/arc3/ACE_5min.gif'),
+        SkaURLWatch('arc3', 1, 'http://cxc.harvard.edu/mta/ASPECT/arc3/GOES_5min.gif'),
+        SkaURLWatch('arc3', 1, 'http://cxc.harvard.edu/mta/ASPECT/arc3/GOES_xray.gif'),
+        SkaURLWatch('arc3', 1, 'http://cxc.harvard.edu/mta/ASPECT/arc3/solar_wind.gif'),
+        SkaURLWatch('arc3', 1, 'http://cxc.harvard.edu/mta/ASPECT/arc3/hrc_shield.png'),
+        H5Watch('arc3', 1, 'ACE.h5'),
+        H5Watch('arc3', 1, 'hrc_shield.h5'),
+        H5Watch('arc3', 1, 'GOES_X.h5'),
+        Ifot3FileWatch('arc3', 1, 'comm'),
+        Ifot3FileWatch('arc3', 1, 'eclipse'),
+        Ifot3FileWatch('arc3', 1, 'grating'),
+        Ifot3FileWatch('arc3', 1, 'grating'),
+        Ifot3FileWatch('arc3', 1, 'load_segment'),
+        Ifot3FileWatch('arc3', 1, 'maneuver'),
+        Ifot3FileWatch('arc3', 1, 'momentum_mon'),
+        Ifot3FileWatch('arc3', 1, 'or_er'),
+        Ifot3FileWatch('arc3', 1, 'radmon'),
+        Ifot3FileWatch('arc3', 1, 'safe'),
+        Ifot3FileWatch('arc3', 1, 'sim'),
+        Ifot3FileWatch('arc3', 1, 'sun_pos_mon'),
+        NonSkaFileWatch('mta snapshot', 1, '/data/mta4/www/Snapshot/chandra.snapshot'),
+        SkaWebWatch('arc3', 1, 'index.html'),
+        SkaWebWatch('arc3', 1, 'chandra.snapshot'),
+        SkaWebWatch('arc3', 1, 'hrc_shield.png'),
+        SkaWebWatch('arc3', 1, 'GOES_xray.gif'),
+        SkaWebWatch('arc3', 1, 'GOES_5min.gif'),
+        SkaWebWatch('arc3', 4, 'solar_wind.gif'),
+        SkaWebWatch('arc3', 1, 'ACE_5min.gif'),
+
+
+])
+
 
 set_report_attrs(jws)
 # Are all the reports OK?
