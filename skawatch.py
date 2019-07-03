@@ -103,6 +103,7 @@ jws.extend([
     #             requires=('Copying plots and log file '
     #                      'to /proj/sot/ska/www/ASPECT',)),
     SkaJobWatch('aca_lts_eval', 2, errors=py_errs),
+    SkaJobWatch('acdc', 2, errors=py_errs),
     SkaJobWatch('aimpoint_mon', 2, errors=py_errs),
     SkaJobWatch('arc', 2, errors=perl_errs,
                 exclude_errors=arc_exclude_errors, logdir='Logs'),
