@@ -114,8 +114,7 @@ jws.extend([
     SkaJobWatch('eng_archive', 1, errors=engarchive_errs,
                 requires=('Checking dp_pcad32 content',)),
     SkaJobWatch('fid_drift_mon', 2, errors=py_errs.union(perl_errs)),
-    SkaJobWatch('kadi', 1, logtask='kadi_events', errors=py_errs,
-                requires=('Ska.ftp: close',)),  # Made it to the end
+    SkaJobWatch('kadi', 1, logtask='kadi_events', errors=py_errs),
     SkaJobWatch('kadi', 1, logtask='kadi_cmds', errors=py_errs),
     SkaJobWatch('star_stats', 2, filename=star_stat,
                 exclude_errors=['Cannot determine guide transition time']),
