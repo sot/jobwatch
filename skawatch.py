@@ -2,6 +2,7 @@
 
 import argparse
 import jobwatch
+from glob import glob
 from jobwatch import (FileWatch, JobWatch, DbWatch,
                       make_html_report, copy_errs,
                       set_report_attrs)
@@ -96,6 +97,9 @@ att_mon_errs = copy_errs(py_errs, ['error'],
 jean_db = '/proj/sot/ska/data/database/Logs/daily.0/{task}.log'
 star_stat = '/proj/sot/ska/data/star_stat_db/Logs/daily.0/{task}.log'
 
+last_chimchim_log = sorted(glob("/home/kadi/occ_ska_sync_logs/chimchim/*.log"))[-1]
+last_cheru_log = sorted(glob("/home/kadi/occ_ska_sync_logs/cheru/*.log"))[-1]
+
 jws = []
 jws.extend([
     # Commented out 2015-Jan-25.  Hopefully this will be resurrected.
@@ -126,6 +130,16 @@ jws.extend([
     SkaJobWatch('guide_stat_db', 2, filename=jean_db),
     SkaJobWatch('load_database', 2, filename=jean_db),
     SkaJobWatch('obsid_load_database', 2, filename=jean_db),
+    SkaJobWatch('occ ska sync chimchim', 1,
+                filename=last_chimchim_log,
+                requires='total size is',
+                exclude_errors=['Welcome! Warning',
+                                '5OHWFAIL.h5']),
+    SkaJobWatch('occ ska sync cheru', 1,
+                filename=last_cheru_log,
+                requires='total size is',
+                exclude_errors=['Welcome! Warning',
+                                '5OHWFAIL.h5']),
     SkaJobWatch('star_database', 2, filename=jean_db),
     SkaJobWatch('starcheck_database', 2, filename=jean_db),
     SkaJobWatch('vv_database', 2, filename=jean_db),
