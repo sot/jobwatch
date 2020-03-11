@@ -154,7 +154,7 @@ jws.extend(
         #SkaURLWatch('arc', 1, 'http://cxc.harvard.edu/mta/ASPECT/arc/hrc_shield.png'),
         H5Watch('arc', 1, 'ACE.h5'),
         #H5Watch('arc', 1, 'hrc_shield.h5'),
-        H5Watch('arc', 1, 'GOES_X.h5'),
+        #H5Watch('arc', 1, 'GOES_X.h5'),
         IfotFileWatch('arc', 1, 'comm'),
         IfotFileWatch('arc', 1, 'eclipse'),
         IfotFileWatch('arc', 1, 'grating'),
