@@ -4,17 +4,58 @@ import time
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 import jobwatch
+# import skawatch
+
+# Ska-specific watchers
+class SkaWebWatch(jobwatch.FileWatch):
+    def __init__(self, task, maxage, basename,
+                 filename='/proj/sot/ska/www/ASPECT/{task}/{basename}'):
+        self.basename = basename
+        super(SkaWebWatch, self).__init__(task, maxage, filename)
+
+
+class SkaJobWatch(jobwatch.JobWatch):
+    def __init__(self, task, maxage=1, errors=jobwatch.ERRORS, requires=(),
+                 logdir='logs', logtask=None,
+                 exclude_errors=(),
+                 filename=('/proj/sot/ska/data/{task}/'
+                           '{logdir}/daily.0/{logtask}.log')):
+        self.type = 'Log'
+        self.task = task
+        self.logtask = logtask or task
+        self.logdir = logdir
+        super(SkaJobWatch, self).__init__(task, filename, errors=errors,
+                                          requires=requires,
+                                          exclude_errors=exclude_errors,
+                                          maxage=maxage)
+
+
+class SkaDbWatch(jobwatch.DbWatch):
+    def __init__(self, task, maxage=1, table=None, timekey='tstart'):
+        super(SkaDbWatch, self).__init__(
+            task, maxage=maxage, table=table, timekey=timekey,
+            query='SELECT MAX({timekey}) AS maxtime FROM {table}',
+            dbi='sybase', server='sybase', user='aca_read', database='aca')
+
+
+class SkaSqliteDbWatch(jobwatch.DbWatch):
+    def __init__(self, task, maxage=1, dbfile=None, table=None, timekey='tstart'):
+        super(SkaSqliteDbWatch, self).__init__(
+            task, maxage=maxage, table=table, timekey=timekey,
+            query='SELECT MAX({timekey}) AS maxtime FROM {table}',
+            dbi='sqlite', server=dbfile)
+
 
 os.chdir(os.path.dirname(__file__))
 
 
 def test_path1():
-    jw = jobwatch.SkaJobWatch(task='arc', logdir='Logs')
+    jw = SkaJobWatch(task='arc', logdir='Logs')
     assert jw.filename == '/proj/sot/ska/data/arc/Logs/daily.0/arc.log'
 
 
 def test_path2():
-    jw = jobwatch.SkaJobWatch(task='eng_archive')
+    jw = SkaJobWatch(task='eng_archive')
     assert jw.filename == ('/proj/sot/ska/data/eng_archive/' +
                           'logs/daily.0/eng_archive.log')
 
@@ -43,7 +84,7 @@ def test_exists():
 def test_default_errors():
     jw = jobwatch.JobWatch('errors', 'logs/errors.log',
                            errors=('warn', 'error'))
-    assert len(jw.found_errors) == 4
+    assert len(jw.found_errors) == 5
     assert jw.found_errors[2] == (60, 'warn test message 3\n', 'warn')
 
 
@@ -59,11 +100,12 @@ def test_filewatch():
                'trending/pitch_hist_recent.png')
     Watch = jobwatch.FileWatch
     jws = [Watch(task='obc_rate_noise', filename=jobfile, maxage=50)]
-    jobwatch.make_html_summary(jws, outdir='outfile')
+    jobwatch.set_report_attrs(jws)
+    jobwatch.make_html_report(jws, rootdir='out_file')
 
 
 def test_dbwatch():
-    Watch = jobwatch.SkaDbWatch
+    Watch = SkaDbWatch
     jws = [Watch('DB acq_stats_data', timekey='tstart',
                  table='acq_stats_data', maxage=4),
            Watch('DB trak_stats_data', timekey='kalman_tstart',
@@ -71,10 +113,11 @@ def test_dbwatch():
            Watch('DB obspar', timekey='tstart', table='obspar', maxage=4),
            Watch('DB aiprops', timekey='tstart', table='aiprops', maxage=4),
            ]
-    jobwatch.make_html_summary(jws, outdir='outdb')
+    jobwatch.set_report_attrs(jws)
+    jobwatch.make_html_report(jws, rootdir='out_db')
 
 
-def test_make_html_summary():
+def test_make_html_report():
     perlidl_errs = ('Use of uninitialized value',
                     '(?<!Program caused arithmetic )error',
                     'warn',
@@ -85,6 +128,7 @@ def test_make_html_summary():
                              requires=('MISSING REQUIRED OUTPUT',
                                        'MORE missing output',
                                        'APPending')),
-           jobwatch.SkaJobWatch(task='eng_archive'),
-           jobwatch.SkaJobWatch(task='astromon')]
-    jobwatch.make_html_summary(jws)
+           SkaJobWatch(task='eng_archive'),
+           SkaJobWatch(task='astromon')]
+    jobwatch.set_report_attrs(jws)
+    jobwatch.make_html_report(jws, rootdir='out_report')

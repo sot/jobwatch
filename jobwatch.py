@@ -33,6 +33,7 @@ class JobWatch(object):
         self.exclude_errors = exclude_errors
         self.requires = requires
         self.maxage = maxage
+        self.type = None
         self.filetime = None
         self.filedate = None
 
@@ -67,7 +68,7 @@ class JobWatch(object):
 
     def check(self):
         if LOUD:
-            print 'Checking ', repr(self)
+            print('Checking ', repr(self))
         if os.path.exists(self.filename + '.OK') or not self.exists:
             self.stale = False
             self.missing_requires = set()
@@ -84,8 +85,8 @@ class JobWatch(object):
                     not any(re.search(exclude_error, line, re.IGNORECASE)
                             for exclude_error in self.exclude_errors)):
                     if LOUD:
-                        print 'MATCH: {}\n    {}'.format(
-                            error, line),
+                        print('MATCH: {}\n    {}'.format(
+                            error, line), end=' ')
                     found_errors.append((i, line, error))
             for require in self.requires:
                 if re.search(require, line, re.IGNORECASE):

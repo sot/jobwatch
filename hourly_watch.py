@@ -115,7 +115,7 @@ class H5Watch(JobWatch):
     @property
     def age(self):
         if not hasattr(self, '_age'):
-            h5 = tables.openFile(self.filename, mode='r')
+            h5 = tables.open_file(self.filename, mode='r')
             table = h5.root.data
             lasttime = table.col('time')[-1]
             h5.close()
