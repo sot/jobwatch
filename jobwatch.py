@@ -264,7 +264,7 @@ def make_html_report(jobwatches, rootdir, datenow=None,
         return index_html
 
     # Set an absolute http_prefix for the emailed version of index.html
-    root_prefix = 'http://cxc.harvard.edu/mta/ASPECT/skawatch/{}/'
+    root_prefix = 'http://cxc.harvard.edu/mta/ASPECT/skawatch3/{}/'
     curr_prefix = root_prefix.format(currdir)
     prev_prefix = root_prefix.format(prevdir)
     next_prefix = root_prefix.format(nextdir)
