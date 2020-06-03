@@ -4,6 +4,8 @@ import os
 import argparse
 import jobwatch
 import time
+from datetime import datetime
+import pytz
 import requests
 import tables
 from glob import glob
@@ -54,14 +56,23 @@ class SkaURLWatch(JobWatch):
                     time_header = 'last-modified'
                 else:
                     time_header = 'date'
-                parsed_time = time.strptime(self.headers[time_header],
-                                            "%a, %d %b %Y %H:%M:%S %Z")
-                # go through time's hoops to work with this in the right timezone
-                os.environ['TZ'] = time.strftime("%Z", parsed_time)
-                time.tzset()
-                self.filetime = time.mktime(parsed_time)
-                del os.environ['TZ']
-                self._age = (time.mktime(time.gmtime()) - self.filetime) / 86400.0
+                # Parse the time including time zone. Make a new datetime object corresponding
+                # to the parsed time, then make a new datetime object for NOW in the same time
+                # zone.  Finally subtract the two to get an age.
+                tm = time.strptime(self.headers[time_header],
+                                   "%a, %d %b %Y %H:%M:%S %Z")
+                dtm_url = datetime(tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec,
+                                   tzinfo=pytz.timezone(tm.tm_zone))
+                # Current local time;  .astimezone() makes this explicitly tz-aware
+                dtm_now_local = datetime.now().astimezone()
+                tzinfo_local = dtm_now_local.tzinfo
+
+                # Convert URL time to local (needed for filetime and filedate)
+                dtm_url_local = dtm_url.astimezone(tzinfo_local)
+
+                self.filetime = time.mktime(dtm_url_local.timetuple())
+                self.filedate = time.ctime(self.filetime)
+                self._age = (dtm_now_local - dtm_url_local).total_seconds() / 86400
             else:
                 self._age = None
         return self._age
