@@ -33,7 +33,6 @@ class JobWatch(object):
         self.exclude_errors = exclude_errors
         self.requires = requires
         self.maxage = maxage
-        self.type = None
         self.filetime = None
         self.filedate = None
 
