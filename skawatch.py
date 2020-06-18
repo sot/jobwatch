@@ -163,7 +163,7 @@ jws.extend([
     SkaWebWatch('aimpoint_mon', 1, 'index.html'),
     SkaWebWatch('aimpoint_mon', 1, 'info.json'),
     SkaWebWatch('attitude_error_mon', 2, 'one_shot_vs_angle.png'),
-    FileWatch('attitude_error_mon', 2, '/proj/sot/ska/data/attitude_error_mon/msd_data.dat'),
+    FileWatch('attitude_error_mon', 2, '/proj/sot/ska/data/attitude_error_mon/data.dat'),
     SkaWebWatch('arc', 1, 'index.html'),
     SkaWebWatch('arc', 1, 'chandra.snapshot'),
     #SkaWebWatch('arc', 1, 'hrc_shield.png'),
