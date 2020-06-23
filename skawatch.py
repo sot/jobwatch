@@ -79,7 +79,7 @@ nmass_errs = copy_errs(py_errs, ('warn', 'fail'),
                        ('warn(?!ing: imaging routines will not be available)',
                         'fail(?!ed to import sherpa)'))
 trace_plus_errs = copy_errs(py_errs.union(perl_errs), ['traceback'],
-                      ["traceback(?!': True)"])
+                            ["traceback(?!': True)"])
 telem_archive_errs = copy_errs(py_errs, ['fail'],
                                ['(?<!...)fail(?!...)'])
 perigee_errs = copy_errs(py_errs, ['warn'],
@@ -89,7 +89,7 @@ astromon_errs = ('uninitialized value', 'warn', 'fatal', 'fail',
                  'ERROR(?!: Data::ParseTable: FITS ' +
                  'files cannot be passed as arrays)')
 engarchive_errs = copy_errs(py_errs, ['fail'],
-                             ['(?<!5OHW)FAIL(?!MODE)'])
+                            ['(?<!5OHW)FAIL(?!MODE)'])
 perigee_errs = copy_errs(py_errs, ['warn'],
                          ['warning(?!: Limit Exceeded. dac of)'])
 att_mon_errs = copy_errs(py_errs, ['error'],
@@ -106,6 +106,7 @@ jws.extend([
     # SkaJobWatch('aca_bgd_mon', 400, errors=perl_errs,
     #             requires=('Copying plots and log file '
     #                      'to /proj/sot/ska/www/ASPECT',)),
+
     SkaJobWatch('aca_lts_eval', 2, errors=py_errs),
     SkaJobWatch('aca_hi_bgd_mon', 2, errors=py_errs,
                 filename='/proj/sot/ska/data/aca_hi_bgd_mon/logs/daily.0/aca_hi_bgd.log'),
@@ -120,7 +121,10 @@ jws.extend([
     SkaJobWatch('eng_archive', 1, errors=engarchive_errs,
                 requires=('Checking dp_pcad32 content',)),
     SkaJobWatch('fid_drift_mon', 2, errors=py_errs.union(perl_errs)),
-    SkaJobWatch('kadi', 1, logtask='kadi_events', errors=py_errs),
+
+    SkaJobWatch('kadi', 1, logtask='kadi_events', errors=py_errs,
+                exclude_errors=['InsecureRequestWarning']),
+
     SkaJobWatch('kadi', 1, logtask='kadi_cmds', errors=py_errs),
     SkaJobWatch('star_stats', 2, filename=star_stat,
                 exclude_errors=['Cannot determine guide transition time']),
@@ -159,7 +163,7 @@ jws.extend([
     SkaWebWatch('aimpoint_mon', 1, 'index.html'),
     SkaWebWatch('aimpoint_mon', 1, 'info.json'),
     SkaWebWatch('attitude_error_mon', 2, 'one_shot_vs_angle.png'),
-    FileWatch('attitude_error_mon', 2, '/proj/sot/ska/data/attitude_error_mon/msd_data.dat'),
+    FileWatch('attitude_error_mon', 2, '/proj/sot/ska/data/attitude_error_mon/data.dat'),
     SkaWebWatch('arc', 1, 'index.html'),
     SkaWebWatch('arc', 1, 'chandra.snapshot'),
     #SkaWebWatch('arc', 1, 'hrc_shield.png'),

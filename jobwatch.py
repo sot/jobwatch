@@ -67,7 +67,7 @@ class JobWatch(object):
 
     def check(self):
         if LOUD:
-            print 'Checking ', repr(self)
+            print('Checking ', repr(self))
         if os.path.exists(self.filename + '.OK') or not self.exists:
             self.stale = False
             self.missing_requires = set()
@@ -84,8 +84,8 @@ class JobWatch(object):
                     not any(re.search(exclude_error, line, re.IGNORECASE)
                             for exclude_error in self.exclude_errors)):
                     if LOUD:
-                        print 'MATCH: {}\n    {}'.format(
-                            error, line),
+                        print('MATCH: {}\n    {}'.format(
+                            error, line), end=' ')
                     found_errors.append((i, line, error))
             for require in self.requires:
                 if re.search(require, line, re.IGNORECASE):
@@ -264,7 +264,7 @@ def make_html_report(jobwatches, rootdir, datenow=None,
         return index_html
 
     # Set an absolute http_prefix for the emailed version of index.html
-    root_prefix = 'http://cxc.harvard.edu/mta/ASPECT/skawatch/{}/'
+    root_prefix = 'http://cxc.harvard.edu/mta/ASPECT/skawatch3/{}/'
     curr_prefix = root_prefix.format(currdir)
     prev_prefix = root_prefix.format(prevdir)
     next_prefix = root_prefix.format(nextdir)
