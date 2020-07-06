@@ -159,7 +159,7 @@ jws.extend(
         SkaURLWatch('kadi', 1, 'http://kadi.cfa.harvard.edu'),
         SkaURLWatch('arc', 1, 'http://cxc.harvard.edu/mta/ASPECT/arc/index.html'),
         SkaURLWatch('arc', 1, 'http://cxc.harvard.edu/mta/ASPECT/arc/timeline.png'),
-        SkaURLWatch('arc', 2, 'http://cxc.harvard.edu/mta/ASPECT/arc/ACE_5min.gif'),
+        SkaURLWatch('arc', 20, 'http://cxc.harvard.edu/mta/ASPECT/arc/ACE_5min.gif'),
         #SkaURLWatch('arc', 2, 'http://cxc.harvard.edu/mta/ASPECT/arc/GOES_5min.gif'),
         #SkaURLWatch('arc', 2, 'http://cxc.harvard.edu/mta/ASPECT/arc/GOES_xray.gif'),
         #SkaURLWatch('arc', 1, 'http://cxc.harvard.edu/mta/ASPECT/arc/hrc_shield.png'),
@@ -184,7 +184,7 @@ jws.extend(
         #SkaWebWatch('arc', 1, 'hrc_shield.png'),
         #SkaWebWatch('arc', 2, 'GOES_xray.gif'),
         #SkaWebWatch('arc', 2, 'GOES_5min.gif'),
-        SkaWebWatch('arc', 2, 'ACE_5min.gif')])
+        SkaWebWatch('arc', 20, 'ACE_5min.gif')])
 
 set_report_attrs(jws)
 # Are all the reports OK?
