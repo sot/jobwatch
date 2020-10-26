@@ -130,7 +130,7 @@ jws.extend([
                 exclude_errors=['Cannot determine guide transition time']),
     SkaJobWatch('timelines', 2, logtask='timelines_cmd_states', logdir='Logs'),
     SkaJobWatch('mica', 2, errors=trace_plus_errs),
-    SkaJobWatch('taco', 8),
+    SkaJobWatch('acis_taco', 8),
     SkaJobWatch('acq_database', 2, filename=jean_db),
     SkaJobWatch('guide_database', 2, filename=jean_db),
     SkaJobWatch('guide_stat_db', 2, filename=jean_db),
