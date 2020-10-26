@@ -97,7 +97,7 @@ att_mon_errs = copy_errs(py_errs, ['error'],
 jean_db = '/proj/sot/ska/data/database/Logs/daily.0/{task}.log'
 star_stat = '/proj/sot/ska/data/star_stat_db/Logs/daily.0/{task}.log'
 
-last_chimchim_log = sorted(glob("/home/kadi/occ_ska_sync_logs/chimchim/*.log"))[-1]
+last_chimchim_log = sorted(glob("/home/kadi/occ_ska_sync_logs/chimchim-old/*.log"))[-1]
 last_cheru_log = sorted(glob("/home/kadi/occ_ska_sync_logs/cheru/*.log"))[-1]
 
 jws = []
@@ -136,7 +136,7 @@ jws.extend([
     SkaJobWatch('guide_stat_db', 2, filename=jean_db),
     SkaJobWatch('load_database', 2, filename=jean_db),
     SkaJobWatch('obsid_load_database', 2, filename=jean_db),
-    SkaJobWatch('occ ska sync chimchim', 1,
+    SkaJobWatch('occ ska sync chimchim-old', 1,
                 filename=last_chimchim_log,
                 requires='total size is',
                 exclude_errors=['Welcome! Warning',
