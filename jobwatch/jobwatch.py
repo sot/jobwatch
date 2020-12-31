@@ -35,7 +35,7 @@ class JobWatch(object):
         self.maxage = maxage
         self.filetime = None
         self.filedate = None
-
+        self.type = 'Job'
         self.check()
 
     @property
@@ -224,7 +224,7 @@ def make_html_report(jobwatches, rootdir, datenow=None,
         nextdir = (DateTime(datenow) + 1).greta[:7]
         outdir = os.path.join(rootdir, currdir)
     if not os.path.exists(outdir):
-        os.mkdir(outdir)
+        os.makedirs(outdir)
 
     log_template = jinja2.Template(open(LOG_TEMPLATE, 'r').read())
     root_prefix = '../{}/'

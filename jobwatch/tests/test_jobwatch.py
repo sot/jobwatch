@@ -1,6 +1,7 @@
 import sys
 import os
 import time
+import pytest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 import jobwatch
@@ -95,16 +96,16 @@ def test_missing_requires():
     assert jw.missing_requires == set(['hello world'])
 
 
-def test_filewatch():
+def test_filewatch(tmpdir):
     jobfile = ('/proj/sot/ska/www/ASPECT/obc_rate_noise/'
                'trending/pitch_hist_recent.png')
     Watch = jobwatch.FileWatch
     jws = [Watch(task='obc_rate_noise', filename=jobfile, maxage=50)]
     jobwatch.set_report_attrs(jws)
-    jobwatch.make_html_report(jws, rootdir='out_file')
+    jobwatch.make_html_report(jws, rootdir=os.path.join(tmpdir, 'out_file'))
 
 
-def test_dbwatch():
+def test_dbwatch(tmpdir):
     Watch = SkaDbWatch
     jws = [Watch('DB acq_stats_data', timekey='tstart',
                  table='acq_stats_data', maxage=4),
@@ -114,10 +115,10 @@ def test_dbwatch():
            Watch('DB aiprops', timekey='tstart', table='aiprops', maxage=4),
            ]
     jobwatch.set_report_attrs(jws)
-    jobwatch.make_html_report(jws, rootdir='out_db')
+    jobwatch.make_html_report(jws, rootdir=os.path.join(tmpdir, 'out_db'))
 
 
-def test_make_html_report():
+def test_make_html_report(tmpdir):
     perlidl_errs = ('Use of uninitialized value',
                     '(?<!Program caused arithmetic )error',
                     'warn',
@@ -131,4 +132,4 @@ def test_make_html_report():
            SkaJobWatch(task='eng_archive'),
            SkaJobWatch(task='astromon')]
     jobwatch.set_report_attrs(jws)
-    jobwatch.make_html_report(jws, rootdir='out_report')
+    jobwatch.make_html_report(jws, rootdir=os.path.join(tmpdir, 'out_report'))
