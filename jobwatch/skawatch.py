@@ -102,11 +102,6 @@ last_cheru_log = sorted(glob("/home/kadi/occ_ska_sync_logs/cheru/*.log"))[-1]
 
 jws = []
 jws.extend([
-    # Commented out 2015-Jan-25.  Hopefully this will be resurrected.
-    # SkaJobWatch('aca_bgd_mon', 400, errors=perl_errs,
-    #             requires=('Copying plots and log file '
-    #                      'to /proj/sot/ska/www/ASPECT',)),
-
     SkaJobWatch('aca_lts_eval', 2, errors=py_errs),
     SkaJobWatch('aca_hi_bgd_mon', 2, errors=py_errs,
                 filename='/proj/sot/ska/data/aca_hi_bgd_mon/logs/daily.0/aca_hi_bgd.log'),
