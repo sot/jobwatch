@@ -20,6 +20,22 @@ SKA = os.environ['SKA']
 HOURS = 1 / 24.
 FILEDIR = os.path.dirname(__file__)
 
+def get_options():
+    parser = argparse.ArgumentParser(description='Replan Central monitor')
+    parser.add_argument('--date-now',
+                        help='Processing date')
+    parser.add_argument('--rootdir',
+                        default='.',
+                        help='Output root directory')
+    parser.add_argument('--email',
+                        action='store_true',
+                        help='Send email report')
+    parser.add_argument('--loud',
+                        action='store_true',
+                        help='Send email report')
+    args = parser.parse_args()
+    return args
+
 
 # Ska-specific watchers
 class SkaURLWatch(JobWatch):
@@ -136,76 +152,64 @@ class H5Watch(JobWatch):
         return self._age
 
 
-parser = argparse.ArgumentParser(description='Replan Central monitor')
-parser.add_argument('--date-now',
-                    help='Processing date')
-parser.add_argument('--rootdir',
-                    default='.',
-                    help='Output root directory')
-parser.add_argument('--email',
-                    action='store_true',
-                    help='Send email report')
-parser.add_argument('--loud',
-                    action='store_true',
-                    help='Send email report')
-args = parser.parse_args()
+def main():
 
-jobwatch.LOUD = args.loud
+    args = get_options()
+    jobwatch.LOUD = args.loud
 
+    jws = []
+    jws.extend(
+        [
+            SkaURLWatch('kadi', 1, 'http://kadi.cfa.harvard.edu'),
+            SkaURLWatch('arc', 1, 'http://cxc.harvard.edu/mta/ASPECT/arc/index.html'),
+            SkaURLWatch('arc', 1, 'http://cxc.harvard.edu/mta/ASPECT/arc/timeline.png'),
+            SkaURLWatch('arc', 20, 'http://cxc.harvard.edu/mta/ASPECT/arc/ACE_5min.gif'),
+            #SkaURLWatch('arc', 2, 'http://cxc.harvard.edu/mta/ASPECT/arc/GOES_5min.gif'),
+            #SkaURLWatch('arc', 2, 'http://cxc.harvard.edu/mta/ASPECT/arc/GOES_xray.gif'),
+            #SkaURLWatch('arc', 1, 'http://cxc.harvard.edu/mta/ASPECT/arc/hrc_shield.png'),
+            H5Watch('arc', 1, 'ACE.h5'),
+            #H5Watch('arc', 1, 'hrc_shield.h5'),
+            #H5Watch('arc', 1, 'GOES_X.h5'),
+            IfotFileWatch('arc', 1, 'comm'),
+            IfotFileWatch('arc', 1, 'eclipse'),
+            IfotFileWatch('arc', 1, 'grating'),
+            IfotFileWatch('arc', 1, 'grating'),
+            IfotFileWatch('arc', 1, 'load_segment'),
+            IfotFileWatch('arc', 1, 'maneuver'),
+            IfotFileWatch('arc', 1, 'momentum_mon'),
+            IfotFileWatch('arc', 1, 'or_er'),
+            IfotFileWatch('arc', 1, 'radmon'),
+            IfotFileWatch('arc', 1, 'safe'),
+            IfotFileWatch('arc', 1, 'sim'),
+            IfotFileWatch('arc', 1, 'sun_pos_mon'),
+            NonSkaFileWatch('mta snapshot', 1, '/data/mta4/www/Snapshot/chandra.snapshot'),
+            SkaWebWatch('arc', 1, 'index.html'),
+            SkaWebWatch('arc', 1, 'chandra.snapshot'),
+            #SkaWebWatch('arc', 1, 'hrc_shield.png'),
+            #SkaWebWatch('arc', 2, 'GOES_xray.gif'),
+            #SkaWebWatch('arc', 2, 'GOES_5min.gif'),
+            SkaWebWatch('arc', 20, 'ACE_5min.gif')])
 
-jws = []
-jws.extend(
-    [
-        SkaURLWatch('kadi', 1, 'http://kadi.cfa.harvard.edu'),
-        SkaURLWatch('arc', 1, 'http://cxc.harvard.edu/mta/ASPECT/arc/index.html'),
-        SkaURLWatch('arc', 1, 'http://cxc.harvard.edu/mta/ASPECT/arc/timeline.png'),
-        SkaURLWatch('arc', 20, 'http://cxc.harvard.edu/mta/ASPECT/arc/ACE_5min.gif'),
-        #SkaURLWatch('arc', 2, 'http://cxc.harvard.edu/mta/ASPECT/arc/GOES_5min.gif'),
-        #SkaURLWatch('arc', 2, 'http://cxc.harvard.edu/mta/ASPECT/arc/GOES_xray.gif'),
-        #SkaURLWatch('arc', 1, 'http://cxc.harvard.edu/mta/ASPECT/arc/hrc_shield.png'),
-        H5Watch('arc', 1, 'ACE.h5'),
-        #H5Watch('arc', 1, 'hrc_shield.h5'),
-        #H5Watch('arc', 1, 'GOES_X.h5'),
-        IfotFileWatch('arc', 1, 'comm'),
-        IfotFileWatch('arc', 1, 'eclipse'),
-        IfotFileWatch('arc', 1, 'grating'),
-        IfotFileWatch('arc', 1, 'grating'),
-        IfotFileWatch('arc', 1, 'load_segment'),
-        IfotFileWatch('arc', 1, 'maneuver'),
-        IfotFileWatch('arc', 1, 'momentum_mon'),
-        IfotFileWatch('arc', 1, 'or_er'),
-        IfotFileWatch('arc', 1, 'radmon'),
-        IfotFileWatch('arc', 1, 'safe'),
-        IfotFileWatch('arc', 1, 'sim'),
-        IfotFileWatch('arc', 1, 'sun_pos_mon'),
-        NonSkaFileWatch('mta snapshot', 1, '/data/mta4/www/Snapshot/chandra.snapshot'),
-        SkaWebWatch('arc', 1, 'index.html'),
-        SkaWebWatch('arc', 1, 'chandra.snapshot'),
-        #SkaWebWatch('arc', 1, 'hrc_shield.png'),
-        #SkaWebWatch('arc', 2, 'GOES_xray.gif'),
-        #SkaWebWatch('arc', 2, 'GOES_5min.gif'),
-        SkaWebWatch('arc', 20, 'ACE_5min.gif')])
+    set_report_attrs(jws)
+    # Are all the reports OK?
+    report_ok = all([j.ok for j in jws])
+    errors = [job.basename for job in jws if not job.ok]
+    # Set the age strings manually to display in hours
+    for jw in jws:
+        jw.age_str = '{:.2f}'.format(jw.age / HOURS) if jw.exists else 'None'
+    index_html = make_html_report(jws, args.rootdir,
+                                  index_template=os.path.join(FILEDIR,
+                                                              'hourly_template.html'),
+                                  just_status=True
+                                  )
+    recipients = ['aca@head.cfa.harvard.edu',
+                  'msobolewska@cfa.harvard.edu', 'tisobe@cfa.harvard.edu', 'swolk@cfa.harvard.edu',
+                  'lina.pulgarin-duque@cfa.harvard.edu']
 
-set_report_attrs(jws)
-# Are all the reports OK?
-report_ok = all([j.ok for j in jws])
-errors = [job.basename for job in jws if not job.ok]
-# Set the age strings manually to display in hours
-for jw in jws:
-    jw.age_str = '{:.2f}'.format(jw.age / HOURS) if jw.exists else 'None'
-index_html = make_html_report(jws, args.rootdir,
-                              index_template=os.path.join(FILEDIR,
-                                                          'hourly_template.html'),
-                              just_status=True
-                              )
-recipients = ['aca@head.cfa.harvard.edu',
-              'msobolewska@cfa.harvard.edu', 'tisobe@cfa.harvard.edu', 'swolk@cfa.harvard.edu',
-              'lina.pulgarin-duque@cfa.harvard.edu']
-
-if args.email and not report_ok:
-    jobwatch.sendmail(
-        recipients, index_html, args.date_now,
-        subject="{} Week {} errors: {}".format(
-            time.strftime("%Y", time.localtime()),
-            time.strftime("%W", time.localtime()),
-            ", ".join(errors)))
+    if args.email and not report_ok:
+        jobwatch.sendmail(
+            recipients, index_html, args.date_now,
+            subject="{} Week {} errors: {}".format(
+                time.strftime("%Y", time.localtime()),
+                time.strftime("%W", time.localtime()),
+                ", ".join(errors)))

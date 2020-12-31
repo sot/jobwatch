@@ -8,6 +8,27 @@ from jobwatch import (FileWatch, JobWatch, DbWatch,
                       set_report_attrs)
 
 
+def get_options():
+    parser = argparse.ArgumentParser(description='Ska processing monitor')
+    parser.add_argument('--date-now',
+                        help='Processing date')
+    parser.add_argument('--rootdir',
+                        default='.',
+                        help='Output root directory')
+    parser.add_argument('--email',
+                        action='store_true',
+                        help='Send email report')
+    parser.add_argument('--loud',
+                        action='store_true',
+                        help='Run loudly')
+    parser.add_argument('--max-age',
+                        type=int,
+                        default=30,
+                        help='Maximum age of watch reports in days')
+    args = parser.parse_args()
+    return args
+
+
 # Ska-specific watchers
 class SkaWebWatch(FileWatch):
     def __init__(self, task, maxage, basename,
@@ -48,25 +69,8 @@ class SkaSqliteDbWatch(DbWatch):
             dbi='sqlite', server=dbfile)
 
 
-parser = argparse.ArgumentParser(description='Ska processing monitor')
-parser.add_argument('--date-now',
-                    help='Processing date')
-parser.add_argument('--rootdir',
-                    default='.',
-                    help='Output root directory')
-parser.add_argument('--email',
-                    action='store_true',
-                    help='Send email report')
-parser.add_argument('--loud',
-                    action='store_true',
-                    help='Run loudly')
-parser.add_argument('--max-age',
-                    type=int,
-                    default=30,
-                    help='Maximum age of watch reports in days')
-args = parser.parse_args()
 
-jobwatch.LOUD = args.loud
+
 
 # Customized errors and paths
 py_errs = set(('error', 'warn', 'fail', 'fatal', 'exception', 'traceback'))
@@ -100,115 +104,122 @@ star_stat = '/proj/sot/ska/data/star_stat_db/Logs/daily.0/{task}.log'
 last_chimchim_log = sorted(glob("/home/kadi/occ_ska_sync_logs/chimchim-old/*.log"))[-1]
 last_cheru_log = sorted(glob("/home/kadi/occ_ska_sync_logs/cheru/*.log"))[-1]
 
-jws = []
-jws.extend([
-    SkaJobWatch('aca_lts_eval', 2, errors=py_errs),
-    SkaJobWatch('aca_hi_bgd_mon', 2, errors=py_errs,
-                filename='/proj/sot/ska/data/aca_hi_bgd_mon/logs/daily.0/aca_hi_bgd.log'),
-    SkaJobWatch('acdc', 2, errors=py_errs),
-    SkaJobWatch('aimpoint_mon', 2, errors=py_errs),
-    SkaJobWatch('arc', 2, errors=perl_errs,
-                exclude_errors=arc_exclude_errors, logdir='Logs'),
-    SkaJobWatch('astromon', 8, errors=astromon_errs),
-    SkaJobWatch('attitude_error_mon', 2, errors=att_mon_errs),
-    SkaJobWatch('dsn_summary', 2, errors=perl_errs,
-                logtask='dsn_summary_master'),
-    SkaJobWatch('eng_archive', 1, errors=engarchive_errs,
-                requires=('Checking dp_pcad32 content',)),
-    SkaJobWatch('fid_drift_mon', 2, errors=py_errs.union(perl_errs)),
+def main():
 
-    SkaJobWatch('kadi', 1, logtask='kadi_events', errors=py_errs,
-                exclude_errors=['InsecureRequestWarning']),
+    args = get_options()
+    jobwatch.LOUD = args.loud
 
-    SkaJobWatch('kadi', 1, logtask='kadi_cmds', errors=py_errs),
-    SkaJobWatch('star_stats', 2, filename=star_stat,
-                exclude_errors=['Cannot determine guide transition time']),
-    SkaJobWatch('timelines', 2, logtask='timelines_cmd_states', logdir='Logs'),
-    SkaJobWatch('mica', 2, errors=trace_plus_errs),
-    SkaJobWatch('acis_taco', 8, filename='/proj/sot/ska/data/acis_taco/logs/daily.0/taco.log'),
-    SkaJobWatch('acq_database', 2, filename=jean_db),
-    SkaJobWatch('guide_database', 2, filename=jean_db),
-    SkaJobWatch('guide_stat_db', 2, filename=jean_db),
-    SkaJobWatch('load_database', 2, filename=jean_db),
-    SkaJobWatch('obsid_load_database', 2, filename=jean_db),
-    SkaJobWatch('occ ska sync chimchim-old', 1,
-                filename=last_chimchim_log,
-                requires='total size is',
-                exclude_errors=['Welcome! Warning',
-                                '5OHWFAIL.h5']),
-    SkaJobWatch('occ ska sync cheru', 1,
-                filename=last_cheru_log,
-                requires='total size is',
-                exclude_errors=['Welcome! Warning',
-                                '5OHWFAIL.h5']),
-    SkaJobWatch('star_database', 2, filename=jean_db),
-    SkaJobWatch('starcheck_database', 2, filename=jean_db),
-    SkaJobWatch('vv_database', 2, filename=jean_db),
-    SkaJobWatch('validate_states', 2, errors=trace_plus_errs),
-    SkaJobWatch('scs107', 2, logdir='Logs', logtask='scs107_check'),
-    SkaJobWatch('telem_archive', 2, errors=telem_archive_errs),
-    SkaJobWatch('perigee_health_plots', 2, logdir='Logs',
-                errors=perigee_errs),
-    SkaJobWatch('vv_trend', 10, errors=py_errs),
+    jws = []
+    jws.extend([
+        SkaJobWatch('aca_lts_eval', 2, errors=py_errs),
+        SkaJobWatch('aca_hi_bgd_mon', 2, errors=py_errs,
+                    filename='/proj/sot/ska/data/aca_hi_bgd_mon/logs/daily.0/aca_hi_bgd.log'),
+        SkaJobWatch('acdc', 2, errors=py_errs),
+        SkaJobWatch('aimpoint_mon', 2, errors=py_errs),
+        SkaJobWatch('arc', 2, errors=perl_errs,
+                    exclude_errors=arc_exclude_errors, logdir='Logs'),
+        SkaJobWatch('astromon', 8, errors=astromon_errs),
+        SkaJobWatch('attitude_error_mon', 2, errors=att_mon_errs),
+        SkaJobWatch('dsn_summary', 2, errors=perl_errs,
+                    logtask='dsn_summary_master'),
+        SkaJobWatch('eng_archive', 1, errors=engarchive_errs,
+                    requires=('Checking dp_pcad32 content',)),
+        SkaJobWatch('fid_drift_mon', 2, errors=py_errs.union(perl_errs)),
+
+        SkaJobWatch('kadi', 1, logtask='kadi_events', errors=py_errs,
+                    exclude_errors=['InsecureRequestWarning']),
+
+        SkaJobWatch('kadi', 1, logtask='kadi_cmds', errors=py_errs),
+        SkaJobWatch('star_stats', 2, filename=star_stat,
+                    exclude_errors=['Cannot determine guide transition time']),
+        SkaJobWatch('timelines', 2, logtask='timelines_cmd_states', logdir='Logs'),
+        SkaJobWatch('mica', 2, errors=trace_plus_errs),
+        SkaJobWatch('acis_taco', 8, filename='/proj/sot/ska/data/acis_taco/logs/daily.0/taco.log'),
+        SkaJobWatch('acq_database', 2, filename=jean_db),
+        SkaJobWatch('guide_database', 2, filename=jean_db),
+        SkaJobWatch('guide_stat_db', 2, filename=jean_db),
+        SkaJobWatch('load_database', 2, filename=jean_db),
+        SkaJobWatch('obsid_load_database', 2, filename=jean_db),
+        SkaJobWatch('occ ska sync chimchim-old', 1,
+                    filename=last_chimchim_log,
+                    requires='total size is',
+                    exclude_errors=['Welcome! Warning',
+                                    '5OHWFAIL.h5']),
+        SkaJobWatch('occ ska sync cheru', 1,
+                    filename=last_cheru_log,
+                    requires='total size is',
+                    exclude_errors=['Welcome! Warning',
+                                    '5OHWFAIL.h5']),
+        SkaJobWatch('star_database', 2, filename=jean_db),
+        SkaJobWatch('starcheck_database', 2, filename=jean_db),
+        SkaJobWatch('vv_database', 2, filename=jean_db),
+        SkaJobWatch('validate_states', 2, errors=trace_plus_errs),
+        SkaJobWatch('scs107', 2, logdir='Logs', logtask='scs107_check'),
+        SkaJobWatch('telem_archive', 2, errors=telem_archive_errs),
+        SkaJobWatch('perigee_health_plots', 2, logdir='Logs',
+                    errors=perigee_errs),
+        SkaJobWatch('vv_trend', 10, errors=py_errs),
     ])
 
-jws.extend([
-    SkaWebWatch('aca_lts_eval', 12, 'index.html'),
-    SkaWebWatch('acq_stat_reports', 10, 'index.html'),
-    SkaWebWatch('aimpoint_mon', 1, 'index.html'),
-    SkaWebWatch('aimpoint_mon', 1, 'info.json'),
-    SkaWebWatch('attitude_error_mon', 2, 'one_shot_vs_angle.png'),
-    FileWatch('attitude_error_mon', 2, '/proj/sot/ska/data/attitude_error_mon/data.dat'),
-    SkaWebWatch('arc', 1, 'index.html'),
-    SkaWebWatch('arc', 1, 'chandra.snapshot'),
-    #SkaWebWatch('arc', 1, 'hrc_shield.png'),
-    #SkaWebWatch('arc', 2, 'GOES_xray.gif'),
-    #SkaWebWatch('arc', 2, 'GOES_5min.gif'),
-    SkaWebWatch('arc', 24, 'solar_wind.gif'),
-    SkaWebWatch('arc', 24, 'solar_flare_monitor.png'),
-    SkaWebWatch('arc', 2, 'ACE_5min.gif'),
-    SkaWebWatch('celmon', 30, 'offsets-ACIS-S-hist.gif'),
-    FileWatch('dsn_summary', 1,
-              '/proj/sot/ska/data/dsn_summary/dsn_summary.dat'),
-    FileWatch('dsn_summary', 1,
-              '/data/mta4/proj/rac/ops/ephem/dsn_summary.dat'),
-    SkaWebWatch('gui_stat_reports', 10, 'index.html'),
-    SkaWebWatch('fid_drift', 2, 'drift_acis_s.png'),
-    SkaWebWatch('eng_archive', 1, '', filename='/proj/sot/ska/data/eng_archive/data/dp_pcad32/TIME.h5'),
-    SkaWebWatch('kadi', 1, '', filename='/proj/sot/ska/data/kadi/events.db3'),
-    SkaWebWatch('obc_rate_noise', 50, 'trending/pitch_hist_recent.png'),
-    SkaWebWatch('perigee_health_plots', 5, 'index.html'),
-    SkaWebWatch('vv_rms', 10, 'hist2d_fig.png'),
+    jws.extend([
+        SkaWebWatch('aca_lts_eval', 12, 'index.html'),
+        SkaWebWatch('acq_stat_reports', 10, 'index.html'),
+        SkaWebWatch('aimpoint_mon', 1, 'index.html'),
+        SkaWebWatch('aimpoint_mon', 1, 'info.json'),
+        SkaWebWatch('attitude_error_mon', 2, 'one_shot_vs_angle.png'),
+        FileWatch('attitude_error_mon', 2, '/proj/sot/ska/data/attitude_error_mon/data.dat'),
+        SkaWebWatch('arc', 1, 'index.html'),
+        SkaWebWatch('arc', 1, 'chandra.snapshot'),
+        #SkaWebWatch('arc', 1, 'hrc_shield.png'),
+        #SkaWebWatch('arc', 2, 'GOES_xray.gif'),
+        #SkaWebWatch('arc', 2, 'GOES_5min.gif'),
+        SkaWebWatch('arc', 24, 'solar_wind.gif'),
+        SkaWebWatch('arc', 24, 'solar_flare_monitor.png'),
+        SkaWebWatch('arc', 2, 'ACE_5min.gif'),
+        SkaWebWatch('celmon', 30, 'offsets-ACIS-S-hist.gif'),
+        FileWatch('dsn_summary', 1,
+                  '/proj/sot/ska/data/dsn_summary/dsn_summary.dat'),
+        FileWatch('dsn_summary', 1,
+                  '/data/mta4/proj/rac/ops/ephem/dsn_summary.dat'),
+        SkaWebWatch('gui_stat_reports', 10, 'index.html'),
+        SkaWebWatch('fid_drift', 2, 'drift_acis_s.png'),
+        SkaWebWatch('eng_archive', 1, '', filename='/proj/sot/ska/data/eng_archive/data/dp_pcad32/TIME.h5'),
+        SkaWebWatch('kadi', 1, '', filename='/proj/sot/ska/data/kadi/events.db3'),
+        SkaWebWatch('obc_rate_noise', 50, 'trending/pitch_hist_recent.png'),
+        SkaWebWatch('perigee_health_plots', 5, 'index.html'),
+        SkaWebWatch('vv_rms', 10, 'hist2d_fig.png'),
     ])
 
-jws.extend([
-    SkaDbWatch('acq_stats_data', 4),
-    SkaDbWatch('aiprops', 4),
-    SkaDbWatch('cmds', -1, timekey='date'),
-    SkaDbWatch('cmd_states', -1, timekey='datestart'),
-    SkaDbWatch('load_segments', -1, timekey='datestop'),
-    SkaDbWatch('obspar', 4),
-    SkaDbWatch('starcheck_obs', 4, timekey='mp_starcat_time'),
-    SkaDbWatch('trak_stats_data', 4, timekey='kalman_tstart'),
+    jws.extend([
+        SkaDbWatch('acq_stats_data', 4),
+        SkaDbWatch('aiprops', 4),
+        SkaDbWatch('cmds', -1, timekey='date'),
+        SkaDbWatch('cmd_states', -1, timekey='datestart'),
+        SkaDbWatch('load_segments', -1, timekey='datestop'),
+        SkaDbWatch('obspar', 4),
+        SkaDbWatch('starcheck_obs', 4, timekey='mp_starcat_time'),
+        SkaDbWatch('trak_stats_data', 4, timekey='kalman_tstart'),
     ])
 
-jws.extend([
-    SkaSqliteDbWatch('cmds', -1, timekey='date',
-                     dbfile='/proj/sot/ska/data/cmd_states/cmd_states.db3'),
-    SkaSqliteDbWatch('cmd_states', -1, timekey='datestart',
-                     dbfile='/proj/sot/ska/data/cmd_states/cmd_states.db3'),
-    SkaSqliteDbWatch('load_segments', -1, timekey='datestop',
-                     dbfile='/proj/sot/ska/data/cmd_states/cmd_states.db3'),
-    SkaSqliteDbWatch('timeline_loads', -1, timekey='datestop',
-                     dbfile='/proj/sot/ska/data/cmd_states/cmd_states.db3'),
+    jws.extend([
+        SkaSqliteDbWatch('cmds', -1, timekey='date',
+                         dbfile='/proj/sot/ska/data/cmd_states/cmd_states.db3'),
+        SkaSqliteDbWatch('cmd_states', -1, timekey='datestart',
+                         dbfile='/proj/sot/ska/data/cmd_states/cmd_states.db3'),
+        SkaSqliteDbWatch('load_segments', -1, timekey='datestop',
+                         dbfile='/proj/sot/ska/data/cmd_states/cmd_states.db3'),
+        SkaSqliteDbWatch('timeline_loads', -1, timekey='datestop',
+                         dbfile='/proj/sot/ska/data/cmd_states/cmd_states.db3'),
     ])
 
 
-set_report_attrs(jws)
-index_html = make_html_report(jws, args.rootdir, args.date_now)
-recipients = ['aca@head.cfa.harvard.edu']
+    set_report_attrs(jws)
+    index_html = make_html_report(jws, args.rootdir, args.date_now)
+    recipients = ['aca@head.cfa.harvard.edu']
 
-if args.email:
-    jobwatch.sendmail(recipients, index_html, args.date_now)
+    if args.email:
+        jobwatch.sendmail(recipients, index_html, args.date_now)
 
-jobwatch.remove_old_reports(args.rootdir, args.date_now, args.max_age)
+    jobwatch.remove_old_reports(args.rootdir, args.date_now, args.max_age)
+
+
