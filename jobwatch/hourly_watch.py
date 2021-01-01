@@ -20,6 +20,7 @@ SKA = os.environ['SKA']
 HOURS = 1 / 24.
 FILEDIR = os.path.dirname(__file__)
 
+
 def get_options():
     parser = argparse.ArgumentParser(description='Replan Central monitor')
     parser.add_argument('--date-now',
@@ -50,7 +51,7 @@ class SkaURLWatch(JobWatch):
 
             try:
                 response = requests.get(self.basename)
-            except:
+            except Exception:
                 self._exists = False
                 self._headers = None
             else:
@@ -77,7 +78,8 @@ class SkaURLWatch(JobWatch):
                 # zone.  Finally subtract the two to get an age.
                 tm = time.strptime(self.headers[time_header],
                                    "%a, %d %b %Y %H:%M:%S %Z")
-                dtm_url = datetime(tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec,
+                dtm_url = datetime(tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour,
+                                   tm.tm_min, tm.tm_sec,
                                    tzinfo=pytz.timezone(tm.tm_zone))
                 # Current local time;  .astimezone() makes this explicitly tz-aware
                 dtm_now_local = datetime.now().astimezone()
@@ -164,12 +166,12 @@ def main():
             SkaURLWatch('arc', 1, 'http://cxc.harvard.edu/mta/ASPECT/arc/index.html'),
             SkaURLWatch('arc', 1, 'http://cxc.harvard.edu/mta/ASPECT/arc/timeline.png'),
             SkaURLWatch('arc', 20, 'http://cxc.harvard.edu/mta/ASPECT/arc/ACE_5min.gif'),
-            #SkaURLWatch('arc', 2, 'http://cxc.harvard.edu/mta/ASPECT/arc/GOES_5min.gif'),
-            #SkaURLWatch('arc', 2, 'http://cxc.harvard.edu/mta/ASPECT/arc/GOES_xray.gif'),
-            #SkaURLWatch('arc', 1, 'http://cxc.harvard.edu/mta/ASPECT/arc/hrc_shield.png'),
+            # SkaURLWatch('arc', 2, 'http://cxc.harvard.edu/mta/ASPECT/arc/GOES_5min.gif'),
+            # SkaURLWatch('arc', 2, 'http://cxc.harvard.edu/mta/ASPECT/arc/GOES_xray.gif'),
+            # SkaURLWatch('arc', 1, 'http://cxc.harvard.edu/mta/ASPECT/arc/hrc_shield.png'),
             H5Watch('arc', 1, 'ACE.h5'),
-            #H5Watch('arc', 1, 'hrc_shield.h5'),
-            #H5Watch('arc', 1, 'GOES_X.h5'),
+            # H5Watch('arc', 1, 'hrc_shield.h5'),
+            # H5Watch('arc', 1, 'GOES_X.h5'),
             IfotFileWatch('arc', 1, 'comm'),
             IfotFileWatch('arc', 1, 'eclipse'),
             IfotFileWatch('arc', 1, 'grating'),
@@ -185,9 +187,9 @@ def main():
             NonSkaFileWatch('mta snapshot', 1, '/data/mta4/www/Snapshot/chandra.snapshot'),
             SkaWebWatch('arc', 1, 'index.html'),
             SkaWebWatch('arc', 1, 'chandra.snapshot'),
-            #SkaWebWatch('arc', 1, 'hrc_shield.png'),
-            #SkaWebWatch('arc', 2, 'GOES_xray.gif'),
-            #SkaWebWatch('arc', 2, 'GOES_5min.gif'),
+            # SkaWebWatch('arc', 1, 'hrc_shield.png'),
+            # SkaWebWatch('arc', 2, 'GOES_xray.gif'),
+            # SkaWebWatch('arc', 2, 'GOES_5min.gif'),
             SkaWebWatch('arc', 20, 'ACE_5min.gif')])
 
     set_report_attrs(jws)

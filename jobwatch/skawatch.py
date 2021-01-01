@@ -69,15 +69,12 @@ class SkaSqliteDbWatch(DbWatch):
             dbi='sqlite', server=dbfile)
 
 
-
-
-
 # Customized errors and paths
 py_errs = set(('error', 'warn', 'fail', 'fatal', 'exception', 'traceback'))
 perl_errs = set(('uninitialized value',
                  '(?<!Program caused arithmetic )error',
                  'warn', 'fatal', 'fail', 'undefined value'))
-arc_exclude_errors = ['warning:\s+\d+\s',
+arc_exclude_errors = [r'warning:\s+\d+\s',
                       'file contains 0 lines that start with AVERAGE']
 nmass_errs = copy_errs(py_errs, ('warn', 'fail'),
                        ('warn(?!ing: imaging routines will not be available)',
@@ -97,12 +94,13 @@ engarchive_errs = copy_errs(py_errs, ['fail'],
 perigee_errs = copy_errs(py_errs, ['warn'],
                          ['warning(?!: Limit Exceeded. dac of)'])
 att_mon_errs = copy_errs(py_errs, ['error'],
-                         ['(?<!\_)error'])
+                         [r'(?<!\_)error'])
 jean_db = '/proj/sot/ska/data/database/Logs/daily.0/{task}.log'
 star_stat = '/proj/sot/ska/data/star_stat_db/Logs/daily.0/{task}.log'
 
 last_chimchim_log = sorted(glob("/home/kadi/occ_ska_sync_logs/chimchim-old/*.log"))[-1]
 last_cheru_log = sorted(glob("/home/kadi/occ_ska_sync_logs/cheru/*.log"))[-1]
+
 
 def main():
 
@@ -170,9 +168,9 @@ def main():
         FileWatch('attitude_error_mon', 2, '/proj/sot/ska/data/attitude_error_mon/data.dat'),
         SkaWebWatch('arc', 1, 'index.html'),
         SkaWebWatch('arc', 1, 'chandra.snapshot'),
-        #SkaWebWatch('arc', 1, 'hrc_shield.png'),
-        #SkaWebWatch('arc', 2, 'GOES_xray.gif'),
-        #SkaWebWatch('arc', 2, 'GOES_5min.gif'),
+        # SkaWebWatch('arc', 1, 'hrc_shield.png'),
+        # SkaWebWatch('arc', 2, 'GOES_xray.gif'),
+        # SkaWebWatch('arc', 2, 'GOES_5min.gif'),
         SkaWebWatch('arc', 24, 'solar_wind.gif'),
         SkaWebWatch('arc', 24, 'solar_flare_monitor.png'),
         SkaWebWatch('arc', 2, 'ACE_5min.gif'),
@@ -183,7 +181,8 @@ def main():
                   '/data/mta4/proj/rac/ops/ephem/dsn_summary.dat'),
         SkaWebWatch('gui_stat_reports', 10, 'index.html'),
         SkaWebWatch('fid_drift', 2, 'drift_acis_s.png'),
-        SkaWebWatch('eng_archive', 1, '', filename='/proj/sot/ska/data/eng_archive/data/dp_pcad32/TIME.h5'),
+        SkaWebWatch('eng_archive', 1, '',
+                    filename='/proj/sot/ska/data/eng_archive/data/dp_pcad32/TIME.h5'),
         SkaWebWatch('kadi', 1, '', filename='/proj/sot/ska/data/kadi/events.db3'),
         SkaWebWatch('obc_rate_noise', 50, 'trending/pitch_hist_recent.png'),
         SkaWebWatch('perigee_health_plots', 5, 'index.html'),
@@ -212,7 +211,6 @@ def main():
                          dbfile='/proj/sot/ska/data/cmd_states/cmd_states.db3'),
     ])
 
-
     set_report_attrs(jws)
     index_html = make_html_report(jws, args.rootdir, args.date_now)
     recipients = ['aca@head.cfa.harvard.edu']
@@ -221,5 +219,3 @@ def main():
         jobwatch.sendmail(recipients, index_html, args.date_now)
 
     jobwatch.remove_old_reports(args.rootdir, args.date_now, args.max_age)
-
-

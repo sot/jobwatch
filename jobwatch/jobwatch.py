@@ -183,7 +183,7 @@ def set_report_attrs(jobwatches):
                       for _, line, _ in jw.found_errors[:maxerrs]]
             if len(jw.found_errors) > maxerrs:
                 popups.append('AND {} MORE'.format(
-                        len(jw.found_errors) - maxerrs))
+                    len(jw.found_errors) - maxerrs))
             popup = '<br/>'.join(popups)
             jw.overlib = ('ONMOUSEOVER="return overlib (\'{}\', WIDTH, 600);" '
                           'ONMOUSEOUT="return nd();"'.format(popup))
