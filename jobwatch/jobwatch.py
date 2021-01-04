@@ -260,6 +260,10 @@ def make_html_report(jobwatches, rootdir, datenow=None,
     outfile.write(index_html)
     outfile.close()
 
+    # Copy the overlib.js into outdir (needed by the current templates)
+    shutil.copy(os.path.join(FILEDIR, 'overlib.js'),
+                outdir)
+
     if just_status:
         return index_html
 
