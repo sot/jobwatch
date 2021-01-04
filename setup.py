@@ -10,9 +10,7 @@ except ImportError:
 
 if "--user" not in sys.argv:
     share_path = os.path.join(sys.prefix, "share", "jobwatch")
-    web_path = os.path.join(sys.prefix, "www", "jobwatch")
-    data_files = [(share_path, ['task_schedule_hourly.cfg', 'task_schedule_daily.cfg']),
-                  (web_path, ['overlib.js'])]
+    data_files = [(share_path, ['task_schedule_hourly.cfg', 'task_schedule_daily.cfg'])]
 else:
     data_files = None
 
