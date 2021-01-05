@@ -35,7 +35,6 @@ class JobWatch(object):
         self.maxage = maxage
         self.filetime = None
         self.filedate = None
-        self.type = 'Job'
         self.check()
 
     @property
@@ -95,7 +94,7 @@ class JobWatch(object):
         self.found_errors = found_errors
 
     def __repr__(self):
-        return '<JobWatch type={} task={}>'.format(self.type, self.task)
+        return '<JobWatch type={} task={}>'.format(getattr(self, 'type', None), self.task)
 
 
 class FileWatch(JobWatch):
@@ -174,8 +173,11 @@ def set_report_attrs(jobwatches):
         if jw.stale:
             jw.age_str = '<span style="color:red";>{}</span>'.format(
                 jw.age_str)
-        if i_jw == 0 or jw.type != jobwatches[i_jw - 1].type:
-            jw.span_cols_text = jw.type
+
+        this_type = getattr(jw, 'type', 'Job')
+        last_type = getattr(jobwatches[i_jw -1], 'type', 'Job')
+        if i_jw == 0 or this_type != last_type:
+            jw.span_cols_text = this_type
 
         maxerrs = 10
         if not jw.ok and jw.found_errors:
