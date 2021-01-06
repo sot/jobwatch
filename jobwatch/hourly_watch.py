@@ -22,7 +22,7 @@ FILEDIR = os.path.dirname(__file__)
 
 
 def get_options():
-    parser = argparse.ArgumentParser(description='Replan Central monitor')
+    parser = argparse.ArgumentParser(description='Hourly status monitor')
     parser.add_argument('--date-now',
                         help='Processing date')
     parser.add_argument('--rootdir',
