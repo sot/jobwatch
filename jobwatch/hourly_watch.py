@@ -33,7 +33,7 @@ def get_options():
                         help='Send email report')
     parser.add_argument('--loud',
                         action='store_true',
-                        help='Send email report')
+                        help='Run loudly')
     args = parser.parse_args()
     return args
 
