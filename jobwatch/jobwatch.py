@@ -35,7 +35,6 @@ class JobWatch(object):
         self.maxage = maxage
         self.filetime = None
         self.filedate = None
-
         self.check()
 
     @property
@@ -95,7 +94,7 @@ class JobWatch(object):
         self.found_errors = found_errors
 
     def __repr__(self):
-        return '<JobWatch type={} task={}>'.format(self.type, self.task)
+        return '<JobWatch type={} task={}>'.format(getattr(self, 'type', None), self.task)
 
 
 class FileWatch(JobWatch):
@@ -174,8 +173,11 @@ def set_report_attrs(jobwatches):
         if jw.stale:
             jw.age_str = '<span style="color:red";>{}</span>'.format(
                 jw.age_str)
-        if i_jw == 0 or jw.type != jobwatches[i_jw - 1].type:
-            jw.span_cols_text = jw.type
+
+        this_type = getattr(jw, 'type', 'Job')
+        last_type = getattr(jobwatches[i_jw -1], 'type', 'Job')
+        if i_jw == 0 or this_type != last_type:
+            jw.span_cols_text = this_type
 
         maxerrs = 10
         if not jw.ok and jw.found_errors:
@@ -183,7 +185,7 @@ def set_report_attrs(jobwatches):
                       for _, line, _ in jw.found_errors[:maxerrs]]
             if len(jw.found_errors) > maxerrs:
                 popups.append('AND {} MORE'.format(
-                        len(jw.found_errors) - maxerrs))
+                    len(jw.found_errors) - maxerrs))
             popup = '<br/>'.join(popups)
             jw.overlib = ('ONMOUSEOVER="return overlib (\'{}\', WIDTH, 600);" '
                           'ONMOUSEOUT="return nd();"'.format(popup))
@@ -224,7 +226,7 @@ def make_html_report(jobwatches, rootdir, datenow=None,
         nextdir = (DateTime(datenow) + 1).greta[:7]
         outdir = os.path.join(rootdir, currdir)
     if not os.path.exists(outdir):
-        os.mkdir(outdir)
+        os.makedirs(outdir)
 
     log_template = jinja2.Template(open(LOG_TEMPLATE, 'r').read())
     root_prefix = '../{}/'
@@ -259,6 +261,12 @@ def make_html_report(jobwatches, rootdir, datenow=None,
     outfile = open(os.path.join(outdir, 'index.html'), 'w')
     outfile.write(index_html)
     outfile.close()
+
+    # Copy the overlib.js into outdir if not there.  This is hardcoded
+    # in the common templates.
+    if not os.path.exists(os.path.join(outdir, 'overlib.js')):
+        shutil.copy(os.path.join(FILEDIR, 'overlib.js'),
+                    outdir)
 
     if just_status:
         return index_html
