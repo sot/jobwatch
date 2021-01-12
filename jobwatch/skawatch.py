@@ -152,6 +152,8 @@ def main():
         SkaJobWatch('telem_archive', 2, errors=telem_archive_errs),
         SkaJobWatch('perigee_health_plots', 2, logdir='Logs',
                     errors=perigee_errs),
+        SkaJobWatch('skare3 testing', 2,
+                    filename='/proj/sot/ska/www/ASPECT_ICXC/skare3/dashboard/tests/test.log'),
         SkaJobWatch('vv_trend', 10, errors=py_errs),
     ])
 
@@ -190,7 +192,10 @@ def main():
                   filename='/proj/sot/ska/data/mica/archive/starcheck/starcheck.db3'),
         SkaWebWatch('obc_rate_noise', 50, 'trending/pitch_hist_recent.png'),
         SkaWebWatch('perigee_health_plots', 5, 'index.html'),
+        FileWatch('skare3 dashboard', 2,
+                  filename='/proj/sot/ska/www/ASPECT/skare3/dashboard/index.html'),
         SkaWebWatch('vv_rms', 10, 'hist2d_fig.png'),
+
     ])
 
     jws.extend([
