@@ -108,7 +108,6 @@ def main():
 
     jws = []
     jws.extend([
-        SkaJobWatch('aca_lts_eval', 2, errors=py_errs),
         SkaJobWatch('aca_hi_bgd_mon', 2, errors=py_errs,
                     filename='/proj/sot/ska/data/aca_hi_bgd_mon/logs/daily.0/aca_hi_bgd.log'),
         SkaJobWatch('acdc', 2, errors=py_errs),
@@ -154,7 +153,6 @@ def main():
     ])
 
     jws.extend([
-        SkaWebWatch('aca_lts_eval', 12, 'index.html'),
         SkaWebWatch('acq_stat_reports', 10, 'index.html'),
         SkaWebWatch('aimpoint_mon', 1, 'index.html'),
         SkaWebWatch('aimpoint_mon', 1, 'info.json'),
