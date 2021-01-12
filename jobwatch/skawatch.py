@@ -180,6 +180,11 @@ def main():
                     filename='/proj/sot/ska/data/eng_archive/data/dp_pcad32/TIME.h5'),
         FileWatch('kadi2', 1, filename='/proj/sot/ska/data/kadi/events.db3'),
         FileWatch('kadi3', 1, filename='/proj/sot/ska/data/kadi/events3.db3'),
+        FileWatch('mica l0', 2, filename='/proj/sot/ska/data/mica/archive/aca0/archfiles.db3'),
+        FileWatch('mica l1', 2, filename='/proj/sot/ska/data/mica/archive/asp1/archfiles.db3'),
+        FileWatch('mica vv', 2, filename='/proj/sot/ska/data/mica/archive/vv/vv.h5'),
+        FileWatch('mica starcheck', 21,
+                  filename='/proj/sot/ska/data/mica/archive/starcheck/starcheck.db3'),
         SkaWebWatch('obc_rate_noise', 50, 'trending/pitch_hist_recent.png'),
         SkaWebWatch('perigee_health_plots', 5, 'index.html'),
         SkaWebWatch('vv_rms', 10, 'hist2d_fig.png'),
@@ -197,6 +202,8 @@ def main():
     ])
 
     jws.extend([
+        SkaSqliteDbWatch('starcheck_obs', -1, timekey='mp_starcat_time',
+                         dbfile='/proj/sot/ska/data/mica/archive/starcheck/starcheck.db3'),
         SkaSqliteDbWatch('cmds', -1, timekey='date',
                          dbfile='/proj/sot/ska/data/cmd_states/cmd_states.db3'),
         SkaSqliteDbWatch('cmd_states', -1, timekey='datestart',
