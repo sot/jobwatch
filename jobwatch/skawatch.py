@@ -75,7 +75,8 @@ perl_errs = set(('uninitialized value',
                  '(?<!Program caused arithmetic )error',
                  'warn', 'fatal', 'fail', 'undefined value'))
 arc_exclude_errors = [r'warning:\s+\d+\s',
-                      'file contains 0 lines that start with AVERAGE']
+                      'file contains 0 lines that start with AVERAGE',
+                      'p3 fluence not plotted, error : cannot do a non-empty take from an empty axes.']
 nmass_errs = copy_errs(py_errs, ('warn', 'fail'),
                        ('warn(?!ing: imaging routines will not be available)',
                         'fail(?!ed to import sherpa)'))
@@ -160,9 +161,9 @@ def main():
         FileWatch('attitude_error_mon', 2, '/proj/sot/ska/data/attitude_error_mon/data.dat'),
         SkaWebWatch('arc', 1, 'index.html'),
         SkaWebWatch('arc', 1, 'chandra.snapshot'),
-        # SkaWebWatch('arc', 1, 'hrc_shield.png'),
-        # SkaWebWatch('arc', 2, 'GOES_xray.gif'),
-        # SkaWebWatch('arc', 2, 'GOES_5min.gif'),
+        SkaWebWatch('arc', 1, 'timeline.png'),
+        SkaWebWatch('arc', 1, 'hrc_shield.png'),
+        SkaWebWatch('arc', 2, 'GOES_5min.gif'),
         SkaWebWatch('arc', 24, 'solar_wind.gif'),
         SkaWebWatch('arc', 24, 'solar_flare_monitor.png'),
         SkaWebWatch('arc', 2, 'ACE_5min.gif'),
