@@ -121,7 +121,7 @@ def main():
                     filename='/proj/sot/ska/data/aca_weekly_report/logs/aca_weekly_report.log'),
         SkaJobWatch('dsn_summary', 2, errors=perl_errs,
                     logtask='dsn_summary_master'),
-        SkaJobWatch('eng_archive', 1, errors=engarchive_errs,
+        SkaJobWatch('eng_archive', 2, errors=engarchive_errs,
                     requires=('Checking dp_pcad32 content',)),
         SkaJobWatch('fid_drift_mon', 2, errors=py_errs.union(perl_errs)),
 
@@ -181,7 +181,7 @@ def main():
                   '/data/mta4/proj/rac/ops/ephem/dsn_summary.dat'),
         SkaWebWatch('gui_stat_reports', 10, 'index.html'),
         SkaWebWatch('fid_drift', 2, 'drift_acis_s.png'),
-        SkaWebWatch('eng_archive', 1, '',
+        SkaWebWatch('eng_archive', 2, '',
                     filename='/proj/sot/ska/data/eng_archive/data/dp_pcad32/TIME.h5'),
         FileWatch('kadi2', 1, filename='/proj/sot/ska/data/kadi/events.db3'),
         FileWatch('kadi3', 1, filename='/proj/sot/ska/data/kadi/events3.db3'),
