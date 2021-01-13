@@ -74,9 +74,10 @@ py_errs = set(('error', 'warn', 'fail', 'fatal', 'exception', 'traceback'))
 perl_errs = set(('uninitialized value',
                  '(?<!Program caused arithmetic )error',
                  'warn', 'fatal', 'fail', 'undefined value'))
-arc_exclude_errors = [r'warning:\s+\d+\s',
-                      'file contains 0 lines that start with AVERAGE',
-                      'p3 fluence not plotted, error : cannot do a non-empty take from an empty axes.']
+arc_exclude_errors = [
+    r'warning:\s+\d+\s',
+    'file contains 0 lines that start with AVERAGE',
+    'p3 fluence not plotted, error : cannot do a non-empty take from an empty axes.']
 nmass_errs = copy_errs(py_errs, ('warn', 'fail'),
                        ('warn(?!ing: imaging routines will not be available)',
                         'fail(?!ed to import sherpa)'))
@@ -176,8 +177,9 @@ def main():
         SkaWebWatch('arc', 24, 'solar_flare_monitor.png'),
         SkaWebWatch('arc', 2, 'ACE_5min.gif'),
         SkaWebWatch('celmon', 30, 'offsets-ACIS-S-hist.gif'),
-        FileWatch('centroid reports', 2,
-                  filename='/proj/sot/ska/www/ASPECT_ICXC/centroid_reports/guide_metrics_obsid.dat'),
+        FileWatch(
+            'centroid reports', 2,
+            filename='/proj/sot/ska/www/ASPECT_ICXC/centroid_reports/guide_metrics_obsid.dat'),
         FileWatch('dsn_summary', 1,
                   '/proj/sot/ska/data/dsn_summary/dsn_summary.dat'),
         FileWatch('dsn_summary', 1,
