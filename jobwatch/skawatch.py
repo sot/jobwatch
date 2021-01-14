@@ -76,8 +76,7 @@ perl_errs = set(('uninitialized value',
                  'warn', 'fatal', 'fail', 'undefined value'))
 arc_exclude_errors = [
     r'warning:\s+\d+\s',
-    'file contains 0 lines that start with AVERAGE',
-    'p3 fluence not plotted, error : cannot do a non-empty take from an empty axes.']
+    'file contains 0 lines that start with AVERAGE']
 nmass_errs = copy_errs(py_errs, ('warn', 'fail'),
                        ('warn(?!ing: imaging routines will not be available)',
                         'fail(?!ed to import sherpa)'))
