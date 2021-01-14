@@ -112,8 +112,7 @@ def main():
         SkaJobWatch('aca_hi_bgd_mon', 2, errors=py_errs,
                     filename='/proj/sot/ska/data/aca_hi_bgd_mon/logs/daily.0/aca_hi_bgd.log'),
         SkaJobWatch('acdc', 2, errors=py_errs),
-        SkaJobWatch('aimpoint_mon', 2, errors=py_errs,
-                    exclude_errors=['ErfaWarning']),
+        SkaJobWatch('aimpoint_mon', 2, errors=py_errs)
         SkaJobWatch('arc', 2, errors=perl_errs,
                     exclude_errors=arc_exclude_errors, logdir='Logs'),
         SkaJobWatch('astromon', 8, errors=astromon_errs),
