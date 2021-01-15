@@ -144,19 +144,14 @@ class DbWatch(JobWatch):
     @property
     def age(self):
         if not hasattr(self, '_age'):
-            row = self.db.fetchone(self.query)
-            self.filetime = DateTime(row['maxtime']).unix
-            self.filedate = time.ctime(self.filetime)
-            self._age = (time.time() - self.filetime) / 86400.0
+            with Ska.DBI.DBI(
+                    dbi=self.dbi, server=self.server, user=self.user,
+                    database=self.database, passwd=self.passwd) as db:
+                row = db.fetchone(self.query)
+                self.filetime = DateTime(row['maxtime']).unix
+                self.filedate = time.ctime(self.filetime)
+                self._age = (time.time() - self.filetime) / 86400.0
         return self._age
-
-    @property
-    def db(self):
-        if not hasattr(self.__class__, '_db'):
-            self.__class__._db = Ska.DBI.DBI(
-                dbi=self.dbi, server=self.server, user=self.user,
-                database=self.database, passwd=self.passwd)
-        return self._db
 
 
 def set_report_attrs(jobwatches):
