@@ -62,7 +62,7 @@ class SkaJobWatch(JobWatch):
 class KadiWatch(JobWatch):
     def __init__(self, task, filename, maxage=1):
         self.type = 'Application Data'
-        super(KadiWatch, self).__init__(task, filename, maxage=maxage)
+        super().__init__(task, filename, maxage=maxage)
 
     @property
     def filelines(self):
@@ -71,11 +71,10 @@ class KadiWatch(JobWatch):
     @property
     def age(self):
         if not hasattr(self, '_age'):
-            dwells = events.dwells.filter(-20)
-            last_dwell = dwells[len(dwells) - 1]
-            self.filetime = CxoTime(last_dwell.start).unix
+            last_dwell = events.dwells.all().last()
+            self.filetime = CxoTime(last_dwell.stop).unix
             self.filedate = time.ctime(self.filetime)
-            self._age = (CxoTime().now() - CxoTime(last_dwell.start)).to_value(u.day)
+            self._age = (CxoTime.now() - CxoTime(last_dwell.stop)).to_value(u.day)
         return self._age
 
 
