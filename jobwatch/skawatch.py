@@ -1,8 +1,14 @@
 #!/usr/bin/env python
 
 import argparse
-import jobwatch
 from glob import glob
+import astropy.units as u
+import time
+
+from cxotime import CxoTime
+from kadi import events
+
+import jobwatch
 from jobwatch import (FileWatch, JobWatch, DbWatch,
                       make_html_report, copy_errs,
                       set_report_attrs)
@@ -51,6 +57,25 @@ class SkaJobWatch(JobWatch):
                                           requires=requires,
                                           exclude_errors=exclude_errors,
                                           maxage=maxage)
+
+
+class KadiWatch(JobWatch):
+    def __init__(self, task, filename, maxage=1):
+        self.type = 'Application Data'
+        super().__init__(task, filename, maxage=maxage)
+
+    @property
+    def filelines(self):
+        return []
+
+    @property
+    def age(self):
+        if not hasattr(self, '_age'):
+            last_dwell = events.dwells.all().last()
+            self.filetime = CxoTime(last_dwell.stop).unix
+            self.filedate = time.ctime(self.filetime)
+            self._age = (CxoTime.now() - CxoTime(last_dwell.stop)).to_value(u.day)
+        return self._age
 
 
 class SkaDbWatch(DbWatch):
@@ -224,6 +249,8 @@ def main():
         SkaSqliteDbWatch('timeline_loads', -1, timekey='datestop',
                          dbfile='/proj/sot/ska/data/cmd_states/cmd_states.db3'),
     ])
+
+    jws.extend([KadiWatch('kadi dwells', '/proj/sot/ska/data/kadi/events3.db3', maxage=3)])
 
     set_report_attrs(jws)
     index_html = make_html_report(jws, args.rootdir, args.date_now)
