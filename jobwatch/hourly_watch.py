@@ -227,3 +227,7 @@ def main():
                 time.strftime("%Y", time.localtime()),
                 time.strftime("%W", time.localtime()),
                 ", ".join(errors)))
+
+
+if __name__ == '__main__':
+    main()
