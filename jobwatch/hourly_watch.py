@@ -25,6 +25,9 @@ def get_options():
     parser = argparse.ArgumentParser(description='Hourly status monitor')
     parser.add_argument('--date-now',
                         help='Processing date')
+    parser.add_argument('--jobs',
+                        default='ska',
+                        help='Jobs to watch ("ska" | "mta", default="ska"')
     parser.add_argument('--rootdir',
                         default='.',
                         help='Output root directory')
@@ -159,10 +162,12 @@ def main():
     args = get_options()
     jobwatch.LOUD = args.loud
 
-    jws = []
-    jws.extend(
-        [
-            SkaURLWatch('kadi', 1, 'http://kadi.cfa.harvard.edu'),
+    if args.jobs == 'ska':
+        jws = [
+            SkaURLWatch('kadi', 1, 'http://kadi.cfa.harvard.edu')
+        ]
+    elif args.jobs == 'mta':
+        jws = [
             SkaURLWatch('arc', 1, 'http://cxc.harvard.edu/mta/ASPECT/arc/index.html'),
             SkaURLWatch('arc', 1, 'http://cxc.harvard.edu/mta/ASPECT/arc/timeline.png'),
             SkaURLWatch('arc', 20, 'http://cxc.harvard.edu/mta/ASPECT/arc/ACE_5min.gif'),
@@ -190,7 +195,10 @@ def main():
             # SkaWebWatch('arc', 1, 'hrc_shield.png'),
             # SkaWebWatch('arc', 2, 'GOES_xray.gif'),
             # SkaWebWatch('arc', 2, 'GOES_5min.gif'),
-            SkaWebWatch('arc', 20, 'ACE_5min.gif')])
+            SkaWebWatch('arc', 20, 'ACE_5min.gif')
+        ]
+    else:
+        raise ValueError('jobs argument must be either "ska" or "mta"')
 
     set_report_attrs(jws)
     # Are all the reports OK?
@@ -202,16 +210,20 @@ def main():
     index_html = make_html_report(jws, args.rootdir,
                                   index_template=os.path.join(FILEDIR,
                                                               'hourly_template.html'),
-                                  just_status=True
-                                  )
-    recipients = ['aca@head.cfa.harvard.edu',
-                  'msobolewska@cfa.harvard.edu', 'tisobe@cfa.harvard.edu', 'swolk@cfa.harvard.edu',
-                  'lina.pulgarin-duque@cfa.harvard.edu']
+                                  just_status=True)
+
+    if args.jobs == 'ska':
+        recipients = ['aca@cfa.harvard.edu']
+    elif args.jobs == 'mta':
+        recipients = [
+            'msobolewska@cfa.harvard.edu', 'swolk@cfa.harvard.edu',
+            'lina.pulgarin-duque@cfa.harvard.edu', 'aca@cfa.harvard.edu']
 
     if args.email and not report_ok:
         jobwatch.sendmail(
             recipients, index_html, args.date_now,
-            subject="{} Week {} errors: {}".format(
+            subject="{} {} Week {} errors: {}".format(
+                args.jobs.upper(),
                 time.strftime("%Y", time.localtime()),
                 time.strftime("%W", time.localtime()),
                 ", ".join(errors)))
