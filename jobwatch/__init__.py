@@ -1,7 +1,8 @@
 import ska_helpers
 __version__ = ska_helpers.get_version(__package__)
 
-from .jobwatch import *
+from .jobwatch import *  # noqa
+
 
 def test(*args, **kwargs):
     '''
@@ -9,4 +10,3 @@ def test(*args, **kwargs):
     '''
     import testr
     return testr.test(*args, **kwargs)
-
