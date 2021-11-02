@@ -1,9 +1,7 @@
-import sys
 import os
 import time
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
-import jobwatch  # noqa
+import jobwatch
 
 
 # Ska-specific watchers
