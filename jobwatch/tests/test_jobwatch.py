@@ -1,11 +1,8 @@
-import sys
 import os
 import time
-import pytest
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 import jobwatch
-# import skawatch
+
 
 # Ska-specific watchers
 class SkaWebWatch(jobwatch.FileWatch):
@@ -58,14 +55,14 @@ def test_path1():
 def test_path2():
     jw = SkaJobWatch(task='eng_archive')
     assert jw.filename == ('/proj/sot/ska/data/eng_archive/' +
-                          'logs/daily.0/eng_archive.log')
+                           'logs/daily.0/eng_archive.log')
 
 
 def test_not_stale():
     filename = 'logs/stale.log'
     os.utime(filename, None)
     jw = jobwatch.JobWatch('stale', filename, maxage=0.1)
-    assert jw.stale == False
+    assert jw.stale is False
 
 
 def test_stale():
@@ -73,13 +70,13 @@ def test_stale():
     ten_hours_ago = time.time() - 10 * 3600.0
     os.utime(filename, (ten_hours_ago, ten_hours_ago))
     jw = jobwatch.JobWatch('stale', filename, maxage=0.1)
-    assert jw.stale == True
+    assert jw.stale is True
 
 
 def test_exists():
     filename = 'logs/doesnt_exist'
     jw = jobwatch.JobWatch('exists', filename, errors=('warn', 'error'))
-    assert jw.exists == False
+    assert jw.exists is False
 
 
 def test_default_errors():

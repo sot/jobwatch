@@ -170,7 +170,7 @@ def set_report_attrs(jobwatches):
                 jw.age_str)
 
         this_type = getattr(jw, 'type', 'Job')
-        last_type = getattr(jobwatches[i_jw -1], 'type', 'Job')
+        last_type = getattr(jobwatches[i_jw - 1], 'type', 'Job')
         if i_jw == 0 or this_type != last_type:
             jw.span_cols_text = this_type
 
