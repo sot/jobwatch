@@ -213,7 +213,6 @@ def main():
         SkaWebWatch('fid_drift', 2, 'drift_acis_s.png'),
         SkaWebWatch('eng_archive', 2, '',
                     filename='/proj/sot/ska/data/eng_archive/data/dp_pcad32/TIME.h5'),
-        FileWatch('kadi2', 1, filename='/proj/sot/ska/data/kadi/events.db3'),
         FileWatch('kadi3', 1, filename='/proj/sot/ska/data/kadi/events3.db3'),
         FileWatch('mica l0', 2, filename='/proj/sot/ska/data/mica/archive/aca0/archfiles.db3'),
         FileWatch('mica l1', 2, filename='/proj/sot/ska/data/mica/archive/asp1/archfiles.db3'),
