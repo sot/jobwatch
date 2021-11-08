@@ -231,8 +231,6 @@ def main():
     jws.extend([
         SkaDbWatch('acq_stats_data', 4),
         SkaDbWatch('aiprops', 4),
-        SkaDbWatch('cmds', -1, timekey='date'),
-        SkaDbWatch('cmd_states', -1, timekey='datestart'),
         SkaDbWatch('load_segments', -1, timekey='datestop'),
         SkaDbWatch('obspar', 4),
         SkaDbWatch('starcheck_obs', 4, timekey='mp_starcat_time'),
@@ -242,10 +240,6 @@ def main():
     jws.extend([
         SkaSqliteDbWatch('starcheck_obs', -1, timekey='mp_starcat_time',
                          dbfile='/proj/sot/ska/data/mica/archive/starcheck/starcheck.db3'),
-        SkaSqliteDbWatch('cmds', -1, timekey='date',
-                         dbfile='/proj/sot/ska/data/cmd_states/cmd_states.db3'),
-        SkaSqliteDbWatch('cmd_states', -1, timekey='datestart',
-                         dbfile='/proj/sot/ska/data/cmd_states/cmd_states.db3'),
         SkaSqliteDbWatch('load_segments', -1, timekey='datestop',
                          dbfile='/proj/sot/ska/data/cmd_states/cmd_states.db3'),
         SkaSqliteDbWatch('timeline_loads', -1, timekey='datestop',
