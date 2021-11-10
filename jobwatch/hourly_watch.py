@@ -217,7 +217,6 @@ def main():
     elif args.jobs == 'mta':
         recipients = ['aca@cfa.harvard.edu', 'mtadude@cfa.harvard.edu']
 
-
     if args.email and not report_ok:
         jobwatch.sendmail(
             recipients, index_html, args.date_now,
