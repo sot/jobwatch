@@ -230,7 +230,6 @@ def main():
     jws.extend([
         SkaDbWatch('acq_stats_data', 4),
         SkaDbWatch('aiprops', 4),
-        SkaDbWatch('load_segments', -1, timekey='datestop'),
         SkaDbWatch('obspar', 4),
         SkaDbWatch('starcheck_obs', 4, timekey='mp_starcat_time'),
         SkaDbWatch('trak_stats_data', 4, timekey='kalman_tstart'),
