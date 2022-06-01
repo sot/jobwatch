@@ -198,7 +198,7 @@ def main():
         SkaWebWatch('arc', 1, 'timeline.png'),
         SkaWebWatch('arc', 1, 'hrc_shield.png'),
         SkaWebWatch('arc', 2, 'GOES_5min.gif'),
-        SkaWebWatch('arc', 24, 'solar_wind.gif'),
+        SkaWebWatch('arc', 24, 'solar_wind.png'),
         SkaWebWatch('arc', 24, 'solar_flare_monitor.png'),
         SkaWebWatch('arc', 2, 'ACE_5min.gif'),
         SkaWebWatch('celmon', 30, 'offsets-ACIS-S-hist.gif'),
