@@ -111,10 +111,6 @@ telem_archive_errs = copy_errs(py_errs, ['fail'],
                                ['(?<!...)fail(?!...)'])
 perigee_errs = copy_errs(py_errs, ['warn'],
                          ['warn(?!ing: limit exceeded, dac of)'])
-astromon_errs = ('uninitialized value', 'warn', 'fatal', 'fail',
-                 'undefined value',
-                 'ERROR(?!: Data::ParseTable: FITS ' +
-                 'files cannot be passed as arrays)')
 engarchive_errs = copy_errs(py_errs, ['fail'],
                             ['(?<!5OHW)FAIL(?!MODE)'])
 perigee_errs = copy_errs(py_errs, ['warn'],
@@ -140,7 +136,6 @@ def main():
         SkaJobWatch('aimpoint_mon', 2, errors=py_errs),
         SkaJobWatch('arc', 2, errors=perl_errs,
                     exclude_errors=arc_exclude_errors, logdir='Logs'),
-        SkaJobWatch('astromon', 8, errors=astromon_errs),
         SkaJobWatch('attitude_error_mon', 2, errors=att_mon_errs),
         SkaJobWatch('aca_weekly_report', 3, errors=py_errs,
                     filename='/proj/sot/ska/data/aca_weekly_report/logs/aca_weekly_report.log'),
