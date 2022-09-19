@@ -196,7 +196,7 @@ def main():
         SkaWebWatch('arc', 24, 'solar_wind.png'),
         SkaWebWatch('arc', 24, 'solar_flare_monitor.png'),
         SkaWebWatch('arc', 2, 'ACE_5min.gif'),
-        SkaWebWatch('celmon', 30, 'offsets-ACIS-S-hist.gif'),
+        SkaWebWatch('celmon', 30, 'offsets-ACIS-S-history.png'),
         FileWatch(
             'centroid reports', 2,
             filename='/proj/sot/ska/www/ASPECT_ICXC/centroid_reports/guide_metrics_obsid.dat'),
