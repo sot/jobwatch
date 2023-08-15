@@ -8,38 +8,68 @@ import time
 import smtplib
 from email.mime.text import MIMEText
 import shutil
+import yaml
 
 import jinja2
 import Ska.DBI
 from Chandra.Time import DateTime
 
 LOUD = False
-ERRORS = ('error', 'warn', 'fail', 'fatal', 'exception', 'traceback')
+ERRORS = ['error', 'warn', 'fail', 'fatal', 'exception', 'traceback']
 
 FILEDIR = os.path.dirname(__file__)
 INDEX_TEMPLATE = os.path.join(FILEDIR, 'index_template.html')
 LOG_TEMPLATE = os.path.join(FILEDIR, 'log_template.html')
 
 
-class JobWatch(object):
+class JobWatch(yaml.YAMLObject):
+    yaml_loader = yaml.SafeLoader
+
     def __init__(self, task, filename,
-                 errors=(),
-                 requires=(),
+                 errors=None,
+                 requires=None,
                  maxage=1,
-                 exclude_errors=()):
+                 exclude_errors=None):
         self.task = task
-        self._filename = filename
+        self.filename_template = filename
         self.errors = errors
         self.exclude_errors = exclude_errors
         self.requires = requires
         self.maxage = maxage
         self.filetime = None
         self.filedate = None
-        self.check()
+        # self.check()
 
     @property
     def filename(self):
         return self._filename.format(**self.__dict__)
+
+    @property
+    def errors(self):
+        return getattr(self, '_errors', [])
+
+    @errors.setter
+    def errors(self, value):
+        if value is not None:
+            self._errors = sorted(set(value))
+
+    @property
+    def exclude_errors(self):
+        return getattr(self, '_exclude_errors', [])
+
+    @exclude_errors.setter
+    def exclude_errors(self, value):
+        if value is not None:
+            self._exclude_errors = sorted(set(value))
+
+    @property
+    def requires(self):
+        return getattr(self, '_requires', [])
+
+    @requires.setter
+    def requires(self, value):
+        if value is not None:
+            self._requires = sorted(set(value))
 
     @property
     def filelines(self):
@@ -69,13 +99,13 @@ class JobWatch(object):
             print('Checking ', repr(self))
         if os.path.exists(self.filename + '.OK') or not self.exists:
             self.stale = False
-            self.missing_requires = set()
+            self.missing_requires = []
             self.found_errors = []
             return
 
         self.stale = self.age > self.maxage
 
-        found_requires = set()
+        found_requires = []
         found_errors = []
         for i, line in enumerate(self.filelines):
             for error in self.errors:
@@ -90,7 +120,7 @@ class JobWatch(object):
                 if re.search(require, line, re.IGNORECASE):
                     found_requires.add(require)
 
-        self.missing_requires = set(self.requires) - found_requires
+        self.missing_requires = list(set(self.requires) - set(found_requires))
         self.found_errors = found_errors
 
     def __repr__(self):
@@ -101,6 +131,8 @@ class FileWatch(JobWatch):
     """Watch the date of a file but do not look into the file contents for
     errors.
     """
+    yaml_tag = '!FileWatch'
+
     def __init__(self, task, maxage=1,
                  filename=None):
         self.type = 'File'
@@ -113,6 +145,8 @@ class FileWatch(JobWatch):
 
 
 class DbWatch(JobWatch):
+    yaml_tag = '!DbWatch'
+
     def __init__(self, task, maxage=1, table=None, timekey='tstart',
                  query='SELECT MAX({timekey}) AS maxtime FROM {table}',
                  dbi=None, server=None, user=None, database=None,
@@ -312,4 +346,4 @@ def sendmail(recipients, html, datenow, subject=None):
 def copy_errs(vals, removes=[], adds=[]):
     newvals = set(vals) - set(removes)
     newvals.update(adds)
-    return newvals
+    return list(newvals)

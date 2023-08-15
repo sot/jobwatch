@@ -14,7 +14,7 @@ from jobwatch import (FileWatch, JobWatch, DbWatch,
                       set_report_attrs)
 
 
-def get_options():
+def get_options(argv=None):
     parser = argparse.ArgumentParser(description='Ska processing monitor')
     parser.add_argument('--date-now',
                         help='Processing date')
@@ -31,12 +31,14 @@ def get_options():
                         type=int,
                         default=30,
                         help='Maximum age of watch reports in days')
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     return args
 
 
 # Ska-specific watchers
 class SkaWebWatch(FileWatch):
+    yaml_tag = '!SkaWebWatch'
+
     def __init__(self, task, maxage, basename,
                  filename='/proj/sot/ska/www/ASPECT/{task}/{basename}'):
         self.basename = basename
@@ -44,9 +46,11 @@ class SkaWebWatch(FileWatch):
 
 
 class SkaJobWatch(JobWatch):
-    def __init__(self, task, maxage=1, errors=jobwatch.ERRORS, requires=(),
+    yaml_tag = '!SkaJobWatch'
+
+    def __init__(self, task, maxage=1, errors=jobwatch.ERRORS, requires=None,
                  logdir='logs', logtask=None,
-                 exclude_errors=(),
+                 exclude_errors=None,
                  filename=('/proj/sot/ska/data/{task}/'
                            '{logdir}/daily.0/{logtask}.log')):
         self.type = 'Log'
@@ -60,6 +64,8 @@ class SkaJobWatch(JobWatch):
 
 
 class KadiWatch(JobWatch):
+    yaml_tag = '!KadiWatch'
+
     def __init__(self, task, filename, maxage=1):
         self.type = 'Application Data'
         super().__init__(task, filename, maxage=maxage)
@@ -79,6 +85,8 @@ class KadiWatch(JobWatch):
 
 
 class SkaDbWatch(DbWatch):
+    yaml_tag = '!SkaDBWatch'
+
     def __init__(self, task, maxage=1, table=None, timekey='tstart'):
         super(SkaDbWatch, self).__init__(
             task, maxage=maxage, table=table, timekey=timekey,
@@ -87,6 +95,8 @@ class SkaDbWatch(DbWatch):
 
 
 class SkaSqliteDbWatch(DbWatch):
+    yaml_tag = '!SkaSqliteDbWatch'
+
     def __init__(self, task, maxage=1, dbfile=None, table=None, timekey='tstart'):
         super(SkaSqliteDbWatch, self).__init__(
             task, maxage=maxage, table=table, timekey=timekey,
@@ -95,18 +105,21 @@ class SkaSqliteDbWatch(DbWatch):
 
 
 # Customized errors and paths
-py_errs = set(('error', 'warn', 'fail', 'fatal', 'exception', 'traceback'))
-perl_errs = set(('uninitialized value',
-                 '(?<!Program caused arithmetic )error',
-                 'warn', 'fatal', 'fail', 'undefined value'))
+py_errs = ['error', 'warn', 'fail', 'fatal', 'exception', 'traceback']
+perl_errs = [
+    'uninitialized value',
+    '(?<!Program caused arithmetic )error',
+    'warn', 'fatal', 'fail', 'undefined value'
+]
 arc_exclude_errors = [
     r'warning:\s+\d+\s',
-    'file contains 0 lines that start with AVERAGE']
+    'file contains 0 lines that start with AVERAGE'
+]
 nmass_errs = copy_errs(py_errs, ('warn', 'fail'),
                        ('warn(?!ing: imaging routines will not be available)',
                         'fail(?!ed to import sherpa)'))
-trace_plus_errs = copy_errs(py_errs.union(perl_errs), ['traceback'],
-                            ["traceback(?!': True)"])
+trace_plus_errs = copy_errs(
+    py_errs + perl_errs, ['traceback'], ["traceback(?!': True)"])
 telem_archive_errs = copy_errs(py_errs, ['fail'],
                                ['(?<!...)fail(?!...)'])
 perigee_errs = copy_errs(py_errs, ['warn'],
@@ -121,12 +134,12 @@ att_mon_errs = copy_errs(py_errs, ['error'],
 jean_db = '/proj/sot/ska/data/database/Logs/daily.0/{task}.log'
 star_stat = '/proj/sot/ska/data/star_stat_db/Logs/daily.0/{task}.log'
 
-last_cheru_log = sorted(glob("/home/kadi/occ_ska_sync_logs/cheru/*.log"))[-1]
+last_cheru_log = 'hello' or sorted(glob("/home/kadi/occ_ska_sync_logs/cheru/*.log"))[-1]
 
 
-def main():
+def main(argv=None):
 
-    args = get_options()
+    args = get_options(argv)
     jobwatch.LOUD = args.loud
 
     jws = []
@@ -144,8 +157,8 @@ def main():
         SkaJobWatch('dsn_summary', 2, errors=perl_errs,
                     logtask='dsn_summary_master'),
         SkaJobWatch('eng_archive', 2, errors=engarchive_errs,
-                    requires=('Checking dp_pcad32 content',)),
-        SkaJobWatch('fid_drift_mon', 2, errors=py_errs.union(perl_errs)),
+                    requires=['Checking dp_pcad32 content']),
+        SkaJobWatch('fid_drift_mon', 2, errors=py_errs + perl_errs),
 
         SkaJobWatch('kadi', 1, logtask='kadi_events', errors=py_errs,
                     exclude_errors=['InsecureRequestWarning']),
@@ -167,7 +180,7 @@ def main():
         SkaJobWatch('obsid_load_database', 2, filename=jean_db),
         SkaJobWatch('occ ska sync cheru', 1,
                     filename=last_cheru_log,
-                    requires='total size is',
+                    requires=['total size is'],
                     exclude_errors=['Welcome! Warning',
                                     '5OHWFAIL.h5']),
         SkaJobWatch('star_database', 2, filename=jean_db),
@@ -243,6 +256,7 @@ def main():
     ])
 
     jws.extend([KadiWatch('kadi dwells', '/proj/sot/ska/data/kadi/events3.db3', maxage=3)])
+    return jws
 
     set_report_attrs(jws)
     index_html = make_html_report(jws, args.rootdir, args.date_now)
