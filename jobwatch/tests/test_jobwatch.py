@@ -28,14 +28,6 @@ class SkaJobWatch(jobwatch.JobWatch):
                                           maxage=maxage)
 
 
-class SkaDbWatch(jobwatch.DbWatch):
-    def __init__(self, task, maxage=1, table=None, timekey='tstart'):
-        super(SkaDbWatch, self).__init__(
-            task, maxage=maxage, table=table, timekey=timekey,
-            query='SELECT MAX({timekey}) AS maxtime FROM {table}',
-            dbi='sybase', server='sybase', user='aca_read', database='aca')
-
-
 class SkaSqliteDbWatch(jobwatch.DbWatch):
     def __init__(self, task, maxage=1, dbfile=None, table=None, timekey='tstart'):
         super(SkaSqliteDbWatch, self).__init__(
@@ -100,19 +92,6 @@ def test_filewatch(tmpdir):
     jws = [Watch(task='obc_rate_noise', filename=jobfile, maxage=50)]
     jobwatch.set_report_attrs(jws)
     jobwatch.make_html_report(jws, rootdir=os.path.join(tmpdir, 'out_file'))
-
-
-def test_dbwatch(tmpdir):
-    Watch = SkaDbWatch
-    jws = [Watch('DB acq_stats_data', timekey='tstart',
-                 table='acq_stats_data', maxage=4),
-           Watch('DB trak_stats_data', timekey='kalman_tstart',
-                 table='trak_stats_data', maxage=4),
-           Watch('DB obspar', timekey='tstart', table='obspar', maxage=4),
-           Watch('DB aiprops', timekey='tstart', table='aiprops', maxage=4),
-           ]
-    jobwatch.set_report_attrs(jws)
-    jobwatch.make_html_report(jws, rootdir=os.path.join(tmpdir, 'out_db'))
 
 
 def test_make_html_report(tmpdir):
