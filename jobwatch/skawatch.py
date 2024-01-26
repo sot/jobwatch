@@ -215,7 +215,6 @@ def main():
 
     ])
 
-
     jws.extend([
         SkaSqliteDbWatch('starcheck_obs', -1, timekey='mp_starcat_time',
                          dbfile='/proj/sot/ska/data/mica/archive/starcheck/starcheck.db3'),
