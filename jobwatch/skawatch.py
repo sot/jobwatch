@@ -149,11 +149,10 @@ def main():
 
         SkaJobWatch('kadi', 1, logtask='kadi_events', errors=py_errs,
                     exclude_errors=['InsecureRequestWarning']),
-
         SkaJobWatch('kadi', 1, logtask='kadi_cmds', errors=py_errs),
+        SkaJobWatch('kadi', 1, logtask='kadi_validate', errors=py_errs),
         SkaJobWatch('star_stats', 2, filename=star_stat,
                     exclude_errors=['Cannot determine guide transition time']),
-        SkaJobWatch('timelines', 2, logtask='timelines_cmd_states', logdir='Logs'),
         SkaJobWatch('mica', 2, errors=trace_plus_errs,
                     filename='/proj/sot/ska/data/mica/logs/daily.0/mica_archive.log',
                     exclude_errors=["Running get_observed_att_errors",
@@ -173,7 +172,6 @@ def main():
         SkaJobWatch('star_database', 2, filename=jean_db),
         SkaJobWatch('starcheck_database', 2, filename=jean_db),
         SkaJobWatch('vv_database', 2, filename=jean_db),
-        SkaJobWatch('validate_states', 2, errors=trace_plus_errs),
         SkaJobWatch('scs107', 2, logdir='Logs', logtask='scs107_check'),
         SkaJobWatch('telem_archive', 2, errors=telem_archive_errs,
                     exclude_errors=['WARNING - no kalman interval for obsid 4']),
@@ -236,10 +234,6 @@ def main():
     jws.extend([
         SkaSqliteDbWatch('starcheck_obs', -1, timekey='mp_starcat_time',
                          dbfile='/proj/sot/ska/data/mica/archive/starcheck/starcheck.db3'),
-        SkaSqliteDbWatch('load_segments', -1, timekey='datestop',
-                         dbfile='/proj/sot/ska/data/cmd_states/cmd_states.db3'),
-        SkaSqliteDbWatch('timeline_loads', -1, timekey='datestop',
-                         dbfile='/proj/sot/ska/data/cmd_states/cmd_states.db3'),
     ])
 
     jws.extend([KadiWatch('kadi dwells', '/proj/sot/ska/data/kadi/events3.db3', maxage=3)])
