@@ -10,7 +10,7 @@ import requests
 import tables
 from glob import glob
 
-from Chandra.Time import DateTime
+from chandra_time import DateTime
 
 from jobwatch import (FileWatch, JobWatch,
                       make_html_report,

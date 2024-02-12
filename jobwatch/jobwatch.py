@@ -10,8 +10,8 @@ from email.mime.text import MIMEText
 import shutil
 
 import jinja2
-import Ska.DBI
-from Chandra.Time import DateTime
+import ska_dbi
+from chandra_time import DateTime
 
 LOUD = False
 ERRORS = ('error', 'warn', 'fail', 'fatal', 'exception', 'traceback')
@@ -144,7 +144,7 @@ class DbWatch(JobWatch):
     @property
     def age(self):
         if not hasattr(self, '_age'):
-            with Ska.DBI.DBI(
+            with ska_dbi.DBI(
                     dbi=self.dbi, server=self.server, user=self.user,
                     database=self.database, passwd=self.passwd) as db:
                 row = db.fetchone(self.query)

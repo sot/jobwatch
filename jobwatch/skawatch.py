@@ -78,14 +78,6 @@ class KadiWatch(JobWatch):
         return self._age
 
 
-class SkaDbWatch(DbWatch):
-    def __init__(self, task, maxage=1, table=None, timekey='tstart'):
-        super(SkaDbWatch, self).__init__(
-            task, maxage=maxage, table=table, timekey=timekey,
-            query='SELECT MAX({timekey}) AS maxtime FROM {table}',
-            dbi='sybase', server='sybase', user='aca_read', database='aca')
-
-
 class SkaSqliteDbWatch(DbWatch):
     def __init__(self, task, maxage=1, dbfile=None, table=None, timekey='tstart'):
         super(SkaSqliteDbWatch, self).__init__(
@@ -221,14 +213,6 @@ def main():
                   filename='/proj/sot/ska/www/ASPECT/skare3/dashboard/index.html'),
         SkaWebWatch('vv_rms', 10, 'hist2d_fig.png'),
 
-    ])
-
-    jws.extend([
-        SkaDbWatch('acq_stats_data', 4),
-        SkaDbWatch('aiprops', 4),
-        SkaDbWatch('obspar', 4),
-        SkaDbWatch('starcheck_obs', 4, timekey='mp_starcat_time'),
-        SkaDbWatch('trak_stats_data', 4, timekey='kalman_tstart'),
     ])
 
     jws.extend([
