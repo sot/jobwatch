@@ -137,7 +137,8 @@ def main():
                     logtask='dsn_summary_master'),
         SkaJobWatch('eng_archive', 2, errors=engarchive_errs,
                     requires=('Checking dp_pcad32 content',)),
-        SkaJobWatch('fid_drift_mon3', 2, errors=py_errs),
+        SkaJobWatch('fid_drift_mon3', 2, errors=py_errs,
+                    filename='/proj/sot/ska/data/fid_drift_mon3/logs/daily.0/fid_drift_mon.log'),
 
         SkaJobWatch('kadi', 1, logtask='kadi_events', errors=py_errs,
                     exclude_errors=['InsecureRequestWarning']),
