@@ -143,7 +143,7 @@ def main():
         SkaJobWatch('kadi', 1, logtask='kadi_events', errors=py_errs,
                     exclude_errors=['InsecureRequestWarning']),
         SkaJobWatch('kadi', 1, logtask='kadi_cmds', errors=py_errs),
-        SkaJobWatch('kadi', 1, logtask='kadi_validate', errors=py_errs),
+        SkaJobWatch('kadi', 1.5, logtask='kadi_validate', errors=py_errs),
         SkaJobWatch('star_stats', 2, filename=star_stat,
                     exclude_errors=['Cannot determine guide transition time']),
         SkaJobWatch('mica', 2, errors=trace_plus_errs,
