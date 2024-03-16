@@ -141,7 +141,12 @@ def main():
                     filename='/proj/sot/ska/data/fid_drift_mon3/logs/daily.0/fid_drift_mon.log'),
 
         SkaJobWatch('kadi', 1, logtask='kadi_events', errors=py_errs,
-                    exclude_errors=['InsecureRequestWarning']),
+                    exclude_errors=['InsecureRequestWarning',
+                                    'MajorEvent 2022:097',
+                                    'MajorEvent 2022:115',
+                                    'MajorEvent 2022:190',
+                                    'MajorEvent 2023:047',
+                                    'MajorEvent 2023:211']),
         SkaJobWatch('kadi', 1, logtask='kadi_cmds', errors=py_errs),
         SkaJobWatch('kadi', 1.5, logtask='kadi_validate', errors=py_errs),
         SkaJobWatch('star_stats', 2, filename=star_stat,
