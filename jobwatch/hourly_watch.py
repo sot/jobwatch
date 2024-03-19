@@ -164,7 +164,8 @@ def main():
 
     if args.jobs == 'ska':
         jws = [
-            SkaURLWatch('kadi', 1, 'http://kadi.cfa.harvard.edu')
+            SkaURLWatch('kadi', 1, 'https://kadi.cfa.harvard.edu'),
+            SkaFileWatch('kadi', 1, 'cmd_events.csv')
         ]
     elif args.jobs == 'mta':
         jws = [
