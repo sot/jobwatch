@@ -193,7 +193,6 @@ def main():
         SkaJobWatch('star_database', 2, filename=jean_db),
         SkaJobWatch('starcheck_database', 2, filename=jean_db),
         SkaJobWatch('vv_database', 2, filename=jean_db),
-        SkaJobWatch('scs107', 2, logdir='Logs', logtask='scs107_check'),
         SkaJobWatch('telem_archive', 2, errors=telem_archive_errs,
                     exclude_errors=['WARNING - no kalman interval for obsid 4']),
         SkaJobWatch('perigee_health_plots', 2, logdir='Logs',
