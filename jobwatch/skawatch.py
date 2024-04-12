@@ -198,8 +198,9 @@ def main():
                     exclude_errors=['WARNING - no kalman interval for obsid 4']),
         SkaJobWatch('perigee_health_plots', 2, logdir='Logs',
                     errors=perigee_errs),
-        SkaJobWatch('skare3 testing', 2,
-                    filename='/proj/sot/ska/www/ASPECT_ICXC/skare3/dashboard/tests/test.log'),
+        SkaJobWatch(
+            'skare3 testing', 3,
+            filename='/proj/sot/ska/data/skare3/skare3_data/data/test_logs/ska3-masters/test.log'),
         SkaJobWatch('vv_trend', 10, errors=py_errs),
     ])
 
@@ -241,7 +242,7 @@ def main():
         SkaWebWatch('kalman_watch3', 2, 'mon_win_kalman_drops_-45d_-1d.png'),
         SkaWebWatch('kalman_watch3', 2, 'index.html'),
         FileWatch('skare3 dashboard', 2,
-                  filename='/proj/sot/ska/www/ASPECT/skare3/dashboard/index.html'),
+                  filename='/proj/sot/ska/www/ASPECT/skare3/dashboard/packages.json'),
         SkaWebWatch('vv_rms', 10, 'hist2d_fig.png'),
 
     ])
