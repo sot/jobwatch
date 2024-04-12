@@ -198,7 +198,7 @@ def main():
                     exclude_errors=['WARNING - no kalman interval for obsid 4']),
         SkaJobWatch('perigee_health_plots', 2, logdir='Logs',
                     errors=perigee_errs),
-        SkaJobWatch('skare3 testing', 2,
+        SkaJobWatch('skare3 testing', 3,
                     filename='/proj/sot/ska/data/skare3/skare3_data/data/test_logs/ska3-masters/test.log'),
         SkaJobWatch('vv_trend', 10, errors=py_errs),
     ])
