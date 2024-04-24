@@ -148,7 +148,7 @@ def main():
         SkaJobWatch('aca_hi_bgd_mon', 2, errors=py_errs,
                     filename='/proj/sot/ska/data/aca_hi_bgd_mon/logs/daily.0/aca_hi_bgd.log'),
         SkaJobWatch('acdc', 2, errors=py_errs),
-        SkaJobWatch('aimpoint_mon', 2, errors=py_errs),
+        SkaJobWatch('aimpoint_mon3', 2, errors=py_errs),
         SkaJobWatch('arc', 2, errors=perl_errs,
                     exclude_errors=arc_exclude_errors, logdir='Logs'),
         SkaJobWatch('astromon', 8, errors=astromon_errs),
@@ -207,8 +207,7 @@ def main():
     jws.extend([
         SkaWebWatch('acq_stat_reports', 10, 'index.html'),
         SkaWebWatch('aca_weekly_report', 3, 'index.html'),
-        SkaWebWatch('aimpoint_mon', 1, 'index.html'),
-        SkaWebWatch('aimpoint_mon', 1, 'info.json'),
+        SkaWebWatch('aimpoint_mon3', 1, 'index.html'),
         SkaWebWatch('attitude_error_mon', 2, 'one_shot_vs_angle.png'),
         FileWatch('attitude_error_mon', 2, '/proj/sot/ska/data/attitude_error_mon/data.dat'),
         SkaWebWatch('arc', 1, 'index.html'),
