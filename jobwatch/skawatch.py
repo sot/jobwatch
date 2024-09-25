@@ -238,7 +238,7 @@ def main():
                   filename='/proj/sot/ska/data/mica/archive/starcheck/starcheck.db3'),
         SkaWebWatch('obc_rate_noise', 50, 'trending/pitch_hist_recent.png'),
         SkaWebWatch('perigee_health_plots', 5, 'index.html'),
-        SkaWebWatch('kalman_watch3', 2, 'mon_win_kalman_drops_-45d_-1d.png'),
+        SkaWebWatch('kalman_watch3', 2, 'mon_win_kalman_drops_-45d_-1d.html'),
         SkaWebWatch('kalman_watch3', 2, 'index.html'),
         FileWatch('skare3 dashboard', 2,
                   filename='/proj/sot/ska/www/ASPECT/skare3/dashboard/packages.json'),
