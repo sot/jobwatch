@@ -115,7 +115,8 @@ perl_errs = set(('uninitialized value',
 arc_exclude_errors = [
     r'warning:\s+\d+\s',
     'file contains 0 lines that start with AVERAGE',
-    'WARNING: AstropyDeprecationWarning: "Reader" was deprecated']
+    'WARNING: AstropyDeprecationWarning: "Reader" was deprecated',
+    "Warning: failed to open URL ftp://ftp.swpc.noaa.gov/pub/lists/ace/ace_epam_5m.txt"]
 nmass_errs = copy_errs(py_errs, ('warn', 'fail'),
                        ('warn(?!ing: imaging routines will not be available)',
                         'fail(?!ed to import sherpa)'))
