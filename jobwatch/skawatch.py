@@ -156,6 +156,9 @@ def main():
         SkaJobWatch('attitude_error_mon', 2, errors=att_mon_errs),
         SkaJobWatch('aca_weekly_report', 3, errors=py_errs,
                     filename='/proj/sot/ska/data/aca_weekly_report/logs/aca_weekly_report.log'),
+        SkaJobWatch("centroid_dashboard", 1, errors=py_errs,
+                    filename=("/proj/sot/ska/data/ska_trend/centroid_dashboard/"
+                              "logs/daily.0/centroid_dashboard.log")),
         SkaJobWatch('dsn_summary', 2, errors=perl_errs,
                     logtask='dsn_summary_master'),
         SkaJobWatch('eng_archive', 2, errors=engarchive_errs,
@@ -220,9 +223,6 @@ def main():
         SkaWebWatch('arc', 24, 'solar_flare_monitor.png'),
         SkaWebWatch('arc', 2, 'ACE_5min.gif'),
         SkaWebWatch('celmon', 30, 'offsets-ACIS-S-history.png'),
-        FileWatch(
-            'centroid reports', 2,
-            filename='/proj/sot/ska/www/ASPECT_ICXC/centroid_reports/guide_metrics_obsid.dat'),
         FileWatch('dsn_summary', 1,
                   '/proj/sot/ska/data/dsn_summary/dsn_summary.dat'),
         FileWatch('dsn_summary', 1,
