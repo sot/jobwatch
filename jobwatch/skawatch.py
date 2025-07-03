@@ -122,8 +122,6 @@ nmass_errs = copy_errs(py_errs, ('warn', 'fail'),
                         'fail(?!ed to import sherpa)'))
 trace_plus_errs = copy_errs(py_errs.union(perl_errs), ['traceback'],
                             ["traceback(?!': True)"])
-telem_archive_errs = copy_errs(py_errs, ['fail'],
-                               ['(?<!...)fail(?!...)'])
 perigee_errs = copy_errs(py_errs, ['warn'],
                          ['warn(?!ing: limit exceeded, dac of)'])
 astromon_errs = ('error', 'fatal', 'fail')
@@ -134,7 +132,6 @@ perigee_errs = copy_errs(py_errs, ['warn'],
 att_mon_errs = copy_errs(py_errs, ['error'],
                          [r'(?<!\_)error'])
 jean_db = '/proj/sot/ska/data/database/Logs/daily.0/{task}.log'
-star_stat = '/proj/sot/ska/data/star_stat_db/Logs/daily.0/{task}.log'
 
 last_cheru_log = sorted(glob("/home/kadi/occ_ska_sync_logs/cheru/*.log"))[-1]
 
@@ -177,8 +174,6 @@ def main():
         SkaJobWatch('kadi', 1, logtask='kadi_cmds', errors=py_errs),
         SkaJobWatch('kadi', 1.5, logtask='kadi_validate', errors=py_errs),
         SkaJobWatch('kalman_watch3', 1, logtask='kalman_watch', errors=py_errs),
-        SkaJobWatch('star_stats', 2, filename=star_stat,
-                    exclude_errors=['Cannot determine guide transition time']),
         SkaJobWatch('mica', 2, errors=trace_plus_errs,
                     filename='/proj/sot/ska/data/mica/logs/daily.0/mica_archive.log',
                     exclude_errors=["Running get_observed_att_errors",
@@ -198,8 +193,6 @@ def main():
         SkaJobWatch('star_database', 2, filename=jean_db),
         SkaJobWatch('starcheck_database', 2, filename=jean_db),
         SkaJobWatch('vv_database', 2, filename=jean_db),
-        SkaJobWatch('telem_archive', 2, errors=telem_archive_errs,
-                    exclude_errors=['WARNING - no kalman interval for obsid 4']),
         SkaJobWatch('perigee_health_plots', 2, logdir='Logs',
                     errors=perigee_errs),
         SkaJobWatch(
