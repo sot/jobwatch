@@ -1,0 +1,940 @@
+- !SkaJobWatch
+  _errors:
+  - error
+  - exception
+  - fail
+  - fatal
+  - traceback
+  - warn
+  filedate: null
+  filename_template: /proj/sot/ska/data/aca_hi_bgd_mon/logs/daily.0/aca_hi_bgd.log
+  filetime: null
+  logdir: logs
+  logtask: aca_hi_bgd_mon
+  maxage: 2
+  task: aca_hi_bgd_mon
+  type: Log
+- !SkaJobWatch
+  _errors:
+  - error
+  - exception
+  - fail
+  - fatal
+  - traceback
+  - warn
+  filedate: null
+  filename_template: /proj/sot/ska/data/{task}/{logdir}/daily.0/{logtask}.log
+  filetime: null
+  logdir: logs
+  logtask: acdc
+  maxage: 2
+  task: acdc
+  type: Log
+- !SkaJobWatch
+  _errors:
+  - error
+  - exception
+  - fail
+  - fatal
+  - traceback
+  - warn
+  filedate: null
+  filename_template: /proj/sot/ska/data/{task}/{logdir}/daily.0/{logtask}.log
+  filetime: null
+  logdir: logs
+  logtask: aimpoint_mon
+  maxage: 2
+  task: aimpoint_mon
+  type: Log
+- !SkaJobWatch
+  _errors:
+  - (?<!Program caused arithmetic )error
+  - fail
+  - fatal
+  - undefined value
+  - uninitialized value
+  - warn
+  _exclude_errors:
+  - file contains 0 lines that start with AVERAGE
+  - warning:\s+\d+\s
+  filedate: null
+  filename_template: /proj/sot/ska/data/{task}/{logdir}/daily.0/{logtask}.log
+  filetime: null
+  logdir: Logs
+  logtask: arc
+  maxage: 2
+  task: arc
+  type: Log
+- !SkaJobWatch
+  _errors:
+  - 'ERROR(?!: Data::ParseTable: FITS files cannot be passed as arrays)'
+  - fail
+  - fatal
+  - undefined value
+  - uninitialized value
+  - warn
+  filedate: null
+  filename_template: /proj/sot/ska/data/{task}/{logdir}/daily.0/{logtask}.log
+  filetime: null
+  logdir: logs
+  logtask: astromon
+  maxage: 8
+  task: astromon
+  type: Log
+- !SkaJobWatch
+  _errors:
+  - (?<!\_)error
+  - exception
+  - fail
+  - fatal
+  - traceback
+  - warn
+  filedate: null
+  filename_template: /proj/sot/ska/data/{task}/{logdir}/daily.0/{logtask}.log
+  filetime: null
+  logdir: logs
+  logtask: attitude_error_mon
+  maxage: 2
+  task: attitude_error_mon
+  type: Log
+- !SkaJobWatch
+  _errors:
+  - error
+  - exception
+  - fail
+  - fatal
+  - traceback
+  - warn
+  filedate: null
+  filename_template: /proj/sot/ska/data/aca_weekly_report/logs/aca_weekly_report.log
+  filetime: null
+  logdir: logs
+  logtask: aca_weekly_report
+  maxage: 3
+  task: aca_weekly_report
+  type: Log
+- !SkaJobWatch
+  _errors:
+  - (?<!Program caused arithmetic )error
+  - fail
+  - fatal
+  - undefined value
+  - uninitialized value
+  - warn
+  filedate: null
+  filename_template: /proj/sot/ska/data/{task}/{logdir}/daily.0/{logtask}.log
+  filetime: null
+  logdir: logs
+  logtask: dsn_summary_master
+  maxage: 2
+  task: dsn_summary
+  type: Log
+- !SkaJobWatch
+  _errors:
+  - (?<!5OHW)FAIL(?!MODE)
+  - error
+  - exception
+  - fatal
+  - traceback
+  - warn
+  _requires:
+  - Checking dp_pcad32 content
+  filedate: null
+  filename_template: /proj/sot/ska/data/{task}/{logdir}/daily.0/{logtask}.log
+  filetime: null
+  logdir: logs
+  logtask: eng_archive
+  maxage: 2
+  task: eng_archive
+  type: Log
+- !SkaJobWatch
+  _errors:
+  - (?<!Program caused arithmetic )error
+  - error
+  - exception
+  - fail
+  - fatal
+  - traceback
+  - undefined value
+  - uninitialized value
+  - warn
+  filedate: null
+  filename_template: /proj/sot/ska/data/{task}/{logdir}/daily.0/{logtask}.log
+  filetime: null
+  logdir: logs
+  logtask: fid_drift_mon
+  maxage: 2
+  task: fid_drift_mon
+  type: Log
+- !SkaJobWatch
+  _errors:
+  - error
+  - exception
+  - fail
+  - fatal
+  - traceback
+  - warn
+  _exclude_errors:
+  - InsecureRequestWarning
+  filedate: null
+  filename_template: /proj/sot/ska/data/{task}/{logdir}/daily.0/{logtask}.log
+  filetime: null
+  logdir: logs
+  logtask: kadi_events
+  maxage: 1
+  task: kadi
+  type: Log
+- !SkaJobWatch
+  _errors:
+  - error
+  - exception
+  - fail
+  - fatal
+  - traceback
+  - warn
+  filedate: null
+  filename_template: /proj/sot/ska/data/{task}/{logdir}/daily.0/{logtask}.log
+  filetime: null
+  logdir: logs
+  logtask: kadi_cmds
+  maxage: 1
+  task: kadi
+  type: Log
+- !SkaJobWatch
+  _errors:
+  - error
+  - exception
+  - fail
+  - fatal
+  - traceback
+  - warn
+  _exclude_errors:
+  - Cannot determine guide transition time
+  filedate: null
+  filename_template: /proj/sot/ska/data/star_stat_db/Logs/daily.0/{task}.log
+  filetime: null
+  logdir: logs
+  logtask: star_stats
+  maxage: 2
+  task: star_stats
+  type: Log
+- !SkaJobWatch
+  _errors:
+  - error
+  - exception
+  - fail
+  - fatal
+  - traceback
+  - warn
+  filedate: null
+  filename_template: /proj/sot/ska/data/{task}/{logdir}/daily.0/{logtask}.log
+  filetime: null
+  logdir: Logs
+  logtask: timelines_cmd_states
+  maxage: 2
+  task: timelines
+  type: Log
+- !SkaJobWatch
+  _errors:
+  - (?<!Program caused arithmetic )error
+  - error
+  - exception
+  - fail
+  - fatal
+  - 'traceback(?!'': True)'
+  - undefined value
+  - uninitialized value
+  - warn
+  _exclude_errors:
+  - 'HTTP Error 504: Gateway Time-out'
+  - Running get_observed_att_errors
+  - previous processing error
+  filedate: null
+  filename_template: /proj/sot/ska/data/mica/logs/daily.0/mica_archive.log
+  filetime: null
+  logdir: logs
+  logtask: mica
+  maxage: 2
+  task: mica
+  type: Log
+- !SkaJobWatch
+  _errors:
+  - error
+  - exception
+  - fail
+  - fatal
+  - traceback
+  - warn
+  filedate: null
+  filename_template: /proj/sot/ska/data/acis_taco/logs/daily.0/taco.log
+  filetime: null
+  logdir: logs
+  logtask: acis_taco
+  maxage: 8
+  task: acis_taco
+  type: Log
+- !SkaJobWatch
+  _errors:
+  - error
+  - exception
+  - fail
+  - fatal
+  - traceback
+  - warn
+  filedate: null
+  filename_template: /proj/sot/ska/data/database/Logs/daily.0/{task}.log
+  filetime: null
+  logdir: logs
+  logtask: acq_database
+  maxage: 2
+  task: acq_database
+  type: Log
+- !SkaJobWatch
+  _errors:
+  - error
+  - exception
+  - fail
+  - fatal
+  - traceback
+  - warn
+  filedate: null
+  filename_template: /proj/sot/ska/data/database/Logs/daily.0/{task}.log
+  filetime: null
+  logdir: logs
+  logtask: guide_database
+  maxage: 2
+  task: guide_database
+  type: Log
+- !SkaJobWatch
+  _errors:
+  - error
+  - exception
+  - fail
+  - fatal
+  - traceback
+  - warn
+  filedate: null
+  filename_template: /proj/sot/ska/data/database/Logs/daily.0/{task}.log
+  filetime: null
+  logdir: logs
+  logtask: guide_stat_db
+  maxage: 2
+  task: guide_stat_db
+  type: Log
+- !SkaJobWatch
+  _errors:
+  - error
+  - exception
+  - fail
+  - fatal
+  - traceback
+  - warn
+  filedate: null
+  filename_template: /proj/sot/ska/data/database/Logs/daily.0/{task}.log
+  filetime: null
+  logdir: logs
+  logtask: load_database
+  maxage: 2
+  task: load_database
+  type: Log
+- !SkaJobWatch
+  _errors:
+  - error
+  - exception
+  - fail
+  - fatal
+  - traceback
+  - warn
+  filedate: null
+  filename_template: /proj/sot/ska/data/database/Logs/daily.0/{task}.log
+  filetime: null
+  logdir: logs
+  logtask: obsid_load_database
+  maxage: 2
+  task: obsid_load_database
+  type: Log
+- !SkaJobWatch
+  _errors:
+  - error
+  - exception
+  - fail
+  - fatal
+  - traceback
+  - warn
+  _exclude_errors:
+  - 5OHWFAIL.h5
+  - Welcome! Warning
+  _requires:
+  - total size is
+  filedate: null
+  filename_template: hello
+  filetime: null
+  logdir: logs
+  logtask: occ ska sync cheru
+  maxage: 1
+  task: occ ska sync cheru
+  type: Log
+- !SkaJobWatch
+  _errors:
+  - error
+  - exception
+  - fail
+  - fatal
+  - traceback
+  - warn
+  filedate: null
+  filename_template: /proj/sot/ska/data/database/Logs/daily.0/{task}.log
+  filetime: null
+  logdir: logs
+  logtask: star_database
+  maxage: 2
+  task: star_database
+  type: Log
+- !SkaJobWatch
+  _errors:
+  - error
+  - exception
+  - fail
+  - fatal
+  - traceback
+  - warn
+  filedate: null
+  filename_template: /proj/sot/ska/data/database/Logs/daily.0/{task}.log
+  filetime: null
+  logdir: logs
+  logtask: starcheck_database
+  maxage: 2
+  task: starcheck_database
+  type: Log
+- !SkaJobWatch
+  _errors:
+  - error
+  - exception
+  - fail
+  - fatal
+  - traceback
+  - warn
+  filedate: null
+  filename_template: /proj/sot/ska/data/database/Logs/daily.0/{task}.log
+  filetime: null
+  logdir: logs
+  logtask: vv_database
+  maxage: 2
+  task: vv_database
+  type: Log
+- !SkaJobWatch
+  _errors:
+  - (?<!Program caused arithmetic )error
+  - error
+  - exception
+  - fail
+  - fatal
+  - 'traceback(?!'': True)'
+  - undefined value
+  - uninitialized value
+  - warn
+  filedate: null
+  filename_template: /proj/sot/ska/data/{task}/{logdir}/daily.0/{logtask}.log
+  filetime: null
+  logdir: logs
+  logtask: validate_states
+  maxage: 2
+  task: validate_states
+  type: Log
+- !SkaJobWatch
+  _errors:
+  - error
+  - exception
+  - fail
+  - fatal
+  - traceback
+  - warn
+  filedate: null
+  filename_template: /proj/sot/ska/data/{task}/{logdir}/daily.0/{logtask}.log
+  filetime: null
+  logdir: Logs
+  logtask: scs107_check
+  maxage: 2
+  task: scs107
+  type: Log
+- !SkaJobWatch
+  _errors:
+  - (?<!...)fail(?!...)
+  - error
+  - exception
+  - fatal
+  - traceback
+  - warn
+  filedate: null
+  filename_template: /proj/sot/ska/data/{task}/{logdir}/daily.0/{logtask}.log
+  filetime: null
+  logdir: logs
+  logtask: telem_archive
+  maxage: 2
+  task: telem_archive
+  type: Log
+- !SkaJobWatch
+  _errors:
+  - error
+  - exception
+  - fail
+  - fatal
+  - traceback
+  - 'warning(?!: Limit Exceeded. dac of)'
+  filedate: null
+  filename_template: /proj/sot/ska/data/{task}/{logdir}/daily.0/{logtask}.log
+  filetime: null
+  logdir: Logs
+  logtask: perigee_health_plots
+  maxage: 2
+  task: perigee_health_plots
+  type: Log
+- !SkaJobWatch
+  _errors:
+  - error
+  - exception
+  - fail
+  - fatal
+  - traceback
+  - warn
+  filedate: null
+  filename_template: /proj/sot/ska/www/ASPECT_ICXC/skare3/dashboard/tests/test.log
+  filetime: null
+  logdir: logs
+  logtask: skare3 testing
+  maxage: 2
+  task: skare3 testing
+  type: Log
+- !SkaJobWatch
+  _errors:
+  - error
+  - exception
+  - fail
+  - fatal
+  - traceback
+  - warn
+  filedate: null
+  filename_template: /proj/sot/ska/data/{task}/{logdir}/daily.0/{logtask}.log
+  filetime: null
+  logdir: logs
+  logtask: vv_trend
+  maxage: 10
+  task: vv_trend
+  type: Log
+- !SkaWebWatch
+  _errors: []
+  _requires: []
+  basename: index.html
+  filedate: null
+  filename_template: /proj/sot/ska/www/ASPECT/{task}/{basename}
+  filetime: null
+  maxage: 10
+  task: acq_stat_reports
+  type: File
+- !SkaWebWatch
+  _errors: []
+  _requires: []
+  basename: index.html
+  filedate: null
+  filename_template: /proj/sot/ska/www/ASPECT/{task}/{basename}
+  filetime: null
+  maxage: 3
+  task: aca_weekly_report
+  type: File
+- !SkaWebWatch
+  _errors: []
+  _requires: []
+  basename: index.html
+  filedate: null
+  filename_template: /proj/sot/ska/www/ASPECT/{task}/{basename}
+  filetime: null
+  maxage: 1
+  task: aimpoint_mon
+  type: File
+- !SkaWebWatch
+  _errors: []
+  _requires: []
+  basename: info.json
+  filedate: null
+  filename_template: /proj/sot/ska/www/ASPECT/{task}/{basename}
+  filetime: null
+  maxage: 1
+  task: aimpoint_mon
+  type: File
+- !SkaWebWatch
+  _errors: []
+  _requires: []
+  basename: one_shot_vs_angle.png
+  filedate: null
+  filename_template: /proj/sot/ska/www/ASPECT/{task}/{basename}
+  filetime: null
+  maxage: 2
+  task: attitude_error_mon
+  type: File
+- !FileWatch
+  _errors: []
+  _requires: []
+  filedate: null
+  filename_template: /proj/sot/ska/data/attitude_error_mon/data.dat
+  filetime: null
+  maxage: 2
+  task: attitude_error_mon
+  type: File
+- !SkaWebWatch
+  _errors: []
+  _requires: []
+  basename: index.html
+  filedate: null
+  filename_template: /proj/sot/ska/www/ASPECT/{task}/{basename}
+  filetime: null
+  maxage: 1
+  task: arc
+  type: File
+- !SkaWebWatch
+  _errors: []
+  _requires: []
+  basename: chandra.snapshot
+  filedate: null
+  filename_template: /proj/sot/ska/www/ASPECT/{task}/{basename}
+  filetime: null
+  maxage: 1
+  task: arc
+  type: File
+- !SkaWebWatch
+  _errors: []
+  _requires: []
+  basename: timeline.png
+  filedate: null
+  filename_template: /proj/sot/ska/www/ASPECT/{task}/{basename}
+  filetime: null
+  maxage: 1
+  task: arc
+  type: File
+- !SkaWebWatch
+  _errors: []
+  _requires: []
+  basename: hrc_shield.png
+  filedate: null
+  filename_template: /proj/sot/ska/www/ASPECT/{task}/{basename}
+  filetime: null
+  maxage: 1
+  task: arc
+  type: File
+- !SkaWebWatch
+  _errors: []
+  _requires: []
+  basename: GOES_5min.gif
+  filedate: null
+  filename_template: /proj/sot/ska/www/ASPECT/{task}/{basename}
+  filetime: null
+  maxage: 2
+  task: arc
+  type: File
+- !SkaWebWatch
+  _errors: []
+  _requires: []
+  basename: solar_wind.png
+  filedate: null
+  filename_template: /proj/sot/ska/www/ASPECT/{task}/{basename}
+  filetime: null
+  maxage: 24
+  task: arc
+  type: File
+- !SkaWebWatch
+  _errors: []
+  _requires: []
+  basename: solar_flare_monitor.png
+  filedate: null
+  filename_template: /proj/sot/ska/www/ASPECT/{task}/{basename}
+  filetime: null
+  maxage: 24
+  task: arc
+  type: File
+- !SkaWebWatch
+  _errors: []
+  _requires: []
+  basename: ACE_5min.gif
+  filedate: null
+  filename_template: /proj/sot/ska/www/ASPECT/{task}/{basename}
+  filetime: null
+  maxage: 2
+  task: arc
+  type: File
+- !SkaWebWatch
+  _errors: []
+  _requires: []
+  basename: offsets-ACIS-S-hist.gif
+  filedate: null
+  filename_template: /proj/sot/ska/www/ASPECT/{task}/{basename}
+  filetime: null
+  maxage: 30
+  task: celmon
+  type: File
+- !FileWatch
+  _errors: []
+  _requires: []
+  filedate: null
+  filename_template: /proj/sot/ska/www/ASPECT_ICXC/centroid_reports/guide_metrics_obsid.dat
+  filetime: null
+  maxage: 2
+  task: centroid reports
+  type: File
+- !FileWatch
+  _errors: []
+  _requires: []
+  filedate: null
+  filename_template: /proj/sot/ska/data/dsn_summary/dsn_summary.dat
+  filetime: null
+  maxage: 1
+  task: dsn_summary
+  type: File
+- !FileWatch
+  _errors: []
+  _requires: []
+  filedate: null
+  filename_template: /data/mta4/proj/rac/ops/ephem/dsn_summary.dat
+  filetime: null
+  maxage: 1
+  task: dsn_summary
+  type: File
+- !SkaWebWatch
+  _errors: []
+  _requires: []
+  basename: index.html
+  filedate: null
+  filename_template: /proj/sot/ska/www/ASPECT/{task}/{basename}
+  filetime: null
+  maxage: 10
+  task: gui_stat_reports
+  type: File
+- !SkaWebWatch
+  _errors: []
+  _requires: []
+  basename: drift_acis_s.png
+  filedate: null
+  filename_template: /proj/sot/ska/www/ASPECT/{task}/{basename}
+  filetime: null
+  maxage: 2
+  task: fid_drift
+  type: File
+- !SkaWebWatch
+  _errors: []
+  _requires: []
+  basename: ''
+  filedate: null
+  filename_template: /proj/sot/ska/data/eng_archive/data/dp_pcad32/TIME.h5
+  filetime: null
+  maxage: 2
+  task: eng_archive
+  type: File
+- !FileWatch
+  _errors: []
+  _requires: []
+  filedate: null
+  filename_template: /proj/sot/ska/data/kadi/events3.db3
+  filetime: null
+  maxage: 1
+  task: kadi3
+  type: File
+- !FileWatch
+  _errors: []
+  _requires: []
+  filedate: null
+  filename_template: /proj/sot/ska/data/mica/archive/aca0/archfiles.db3
+  filetime: null
+  maxage: 2
+  task: mica l0
+  type: File
+- !FileWatch
+  _errors: []
+  _requires: []
+  filedate: null
+  filename_template: /proj/sot/ska/data/mica/archive/asp1/archfiles.db3
+  filetime: null
+  maxage: 2
+  task: mica l1
+  type: File
+- !FileWatch
+  _errors: []
+  _requires: []
+  filedate: null
+  filename_template: /proj/sot/ska/data/mica/archive/vv/vv.h5
+  filetime: null
+  maxage: 2
+  task: mica vv
+  type: File
+- !FileWatch
+  _errors: []
+  _requires: []
+  filedate: null
+  filename_template: /proj/sot/ska/data/mica/archive/starcheck/starcheck.db3
+  filetime: null
+  maxage: 21
+  task: mica starcheck
+  type: File
+- !SkaWebWatch
+  _errors: []
+  _requires: []
+  basename: trending/pitch_hist_recent.png
+  filedate: null
+  filename_template: /proj/sot/ska/www/ASPECT/{task}/{basename}
+  filetime: null
+  maxage: 50
+  task: obc_rate_noise
+  type: File
+- !SkaWebWatch
+  _errors: []
+  _requires: []
+  basename: index.html
+  filedate: null
+  filename_template: /proj/sot/ska/www/ASPECT/{task}/{basename}
+  filetime: null
+  maxage: 5
+  task: perigee_health_plots
+  type: File
+- !FileWatch
+  _errors: []
+  _requires: []
+  filedate: null
+  filename_template: /proj/sot/ska/www/ASPECT/skare3/dashboard/index.html
+  filetime: null
+  maxage: 2
+  task: skare3 dashboard
+  type: File
+- !SkaWebWatch
+  _errors: []
+  _requires: []
+  basename: hist2d_fig.png
+  filedate: null
+  filename_template: /proj/sot/ska/www/ASPECT/{task}/{basename}
+  filetime: null
+  maxage: 10
+  task: vv_rms
+  type: File
+- !SkaDBWatch
+  _query: SELECT MAX({timekey}) AS maxtime FROM {table}
+  database: aca
+  dbi: sybase
+  filedate: null
+  filename_template: NONE
+  filetime: null
+  maxage: 4
+  passwd: null
+  server: sybase
+  table: acq_stats_data
+  task: acq_stats_data
+  timekey: tstart
+  type: DB sybase
+  user: aca_read
+- !SkaDBWatch
+  _query: SELECT MAX({timekey}) AS maxtime FROM {table}
+  database: aca
+  dbi: sybase
+  filedate: null
+  filename_template: NONE
+  filetime: null
+  maxage: 4
+  passwd: null
+  server: sybase
+  table: aiprops
+  task: aiprops
+  timekey: tstart
+  type: DB sybase
+  user: aca_read
+- !SkaDBWatch
+  _query: SELECT MAX({timekey}) AS maxtime FROM {table}
+  database: aca
+  dbi: sybase
+  filedate: null
+  filename_template: NONE
+  filetime: null
+  maxage: 4
+  passwd: null
+  server: sybase
+  table: obspar
+  task: obspar
+  timekey: tstart
+  type: DB sybase
+  user: aca_read
+- !SkaDBWatch
+  _query: SELECT MAX({timekey}) AS maxtime FROM {table}
+  database: aca
+  dbi: sybase
+  filedate: null
+  filename_template: NONE
+  filetime: null
+  maxage: 4
+  passwd: null
+  server: sybase
+  table: starcheck_obs
+  task: starcheck_obs
+  timekey: mp_starcat_time
+  type: DB sybase
+  user: aca_read
+- !SkaDBWatch
+  _query: SELECT MAX({timekey}) AS maxtime FROM {table}
+  database: aca
+  dbi: sybase
+  filedate: null
+  filename_template: NONE
+  filetime: null
+  maxage: 4
+  passwd: null
+  server: sybase
+  table: trak_stats_data
+  task: trak_stats_data
+  timekey: kalman_tstart
+  type: DB sybase
+  user: aca_read
+- !SkaSqliteDbWatch
+  _query: SELECT MAX({timekey}) AS maxtime FROM {table}
+  database: null
+  dbi: sqlite
+  filedate: null
+  filename_template: NONE
+  filetime: null
+  maxage: -1
+  passwd: null
+  server: /proj/sot/ska/data/mica/archive/starcheck/starcheck.db3
+  table: starcheck_obs
+  task: starcheck_obs
+  timekey: mp_starcat_time
+  type: DB sqlite
+  user: null
+- !SkaSqliteDbWatch
+  _query: SELECT MAX({timekey}) AS maxtime FROM {table}
+  database: null
+  dbi: sqlite
+  filedate: null
+  filename_template: NONE
+  filetime: null
+  maxage: -1
+  passwd: null
+  server: /proj/sot/ska/data/cmd_states/cmd_states.db3
+  table: load_segments
+  task: load_segments
+  timekey: datestop
+  type: DB sqlite
+  user: null
+- !SkaSqliteDbWatch
+  _query: SELECT MAX({timekey}) AS maxtime FROM {table}
+  database: null
+  dbi: sqlite
+  filedate: null
+  filename_template: NONE
+  filetime: null
+  maxage: -1
+  passwd: null
+  server: /proj/sot/ska/data/cmd_states/cmd_states.db3
+  table: timeline_loads
+  task: timeline_loads
+  timekey: datestop
+  type: DB sqlite
+  user: null
+- !KadiWatch
+  filedate: null
+  filename_template: /proj/sot/ska/data/kadi/events3.db3
+  filetime: null
+  maxage: 3
+  task: kadi dwells
+  type: Application Data
