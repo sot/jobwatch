@@ -108,7 +108,7 @@ class SkaSqliteDbWatch(DbWatch):
 
 
 # Customized errors and paths
-py_errs = set(('error', 'warn', 'fail', 'fatal', 'exception', 'traceback'))
+py_errs = set(('error', 'warning', 'fail', 'fatal', 'exception', 'traceback'))
 perl_errs = set(('uninitialized value',
                  '(?<!Program caused arithmetic )error',
                  'warn', 'fatal', 'fail', 'undefined value'))
