@@ -149,7 +149,7 @@ def main():
         SkaJobWatch('aimpoint_mon3', 2, errors=py_errs),
         SkaJobWatch('arc', 2, errors=perl_errs,
                     exclude_errors=arc_exclude_errors, logdir='Logs'),
-        SkaJobWatch('astromon', 8, errors=astromon_errs),
+        SkaJobWatch('astromon', 8, errors=astromon_errs, exclude_errors=["acis_streak_map failed"]),
         SkaJobWatch('attitude_error_mon', 2, errors=att_mon_errs),
         SkaJobWatch('aca_weekly_report', 3, errors=py_errs,
                     filename='/proj/sot/ska/data/aca_weekly_report/logs/aca_weekly_report.log'),
