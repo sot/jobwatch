@@ -131,7 +131,6 @@ perigee_errs = copy_errs(py_errs, ['warn'],
                          ['warning(?!: Limit Exceeded. dac of)'])
 att_mon_errs = copy_errs(py_errs, ['error'],
                          [r'(?<!\_)error'])
-jean_db = '/proj/sot/ska/data/database/Logs/daily.0/{task}.log'
 
 last_cheru_log = sorted(glob("/home/kadi/occ_ska_sync_logs/cheru/*.log"))[-1]
 
@@ -181,19 +180,11 @@ def main():
                                     "HTTP Error 504: Gateway Time-out",
                                     "previous processing error"]),
         SkaJobWatch('acis_taco', 8, filename='/proj/sot/ska/data/acis_taco/logs/daily.0/taco.log'),
-        SkaJobWatch('acq_database', 2, filename=jean_db),
-        SkaJobWatch('guide_database', 2, filename=jean_db),
-        SkaJobWatch('guide_stat_db', 2, filename=jean_db),
-        SkaJobWatch('load_database', 2, filename=jean_db),
-        SkaJobWatch('obsid_load_database', 2, filename=jean_db),
         SkaJobWatch('occ ska sync cheru', 1,
                     filename=last_cheru_log,
                     requires='total size is',
                     exclude_errors=['Welcome! Warning',
                                     '5OHWFAIL.h5']),
-        SkaJobWatch('star_database', 2, filename=jean_db),
-        SkaJobWatch('starcheck_database', 2, filename=jean_db),
-        SkaJobWatch('vv_database', 2, filename=jean_db),
         SkaJobWatch('perigee_health_plots', 2, logdir='Logs',
                     errors=perigee_errs),
         SkaJobWatch(
